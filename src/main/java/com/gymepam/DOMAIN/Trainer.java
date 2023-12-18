@@ -14,7 +14,7 @@ public class Trainer implements Serializable {
     @Column(name = "Id", nullable = false)
     private Long Id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
