@@ -1,13 +1,14 @@
 package com.gymepam.DAO.INMEMORY;
 
-import com.gymepam.DAO.Repo;
+import com.gymepam.DAO.UserRepo;
 import com.gymepam.DOMAIN.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository("InMemoryUser")
-public class UserStorageInMemory implements Repo<User> {
+public class UserStorageInMemory implements UserRepo {
 
     private static Map<Long, User> UserMap = new HashMap<>();
 
@@ -34,4 +35,14 @@ public class UserStorageInMemory implements Repo<User> {
     public List<User> findAll() {
         return new ArrayList<>(UserMap.values());
     }
+
+    @Override
+    public List<String> getAllUsernames() {
+        List<User> usersList = new ArrayList<>(UserMap.values());
+        return  usersList.stream()
+                .map(User::getUserName)
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -1,7 +1,6 @@
 package com.gymepam.SERVICE;
 
-import com.gymepam.DAO.Repo;
-import com.gymepam.DOMAIN.Trainee;
+import com.gymepam.DAO.TrainingRepo;
 import com.gymepam.DOMAIN.Training;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -12,14 +11,14 @@ import java.util.List;
 
 @Service
 public class TrainingService {
-    private static Repo<Training> trainingRepository;
+    private static TrainingRepo trainingRepository;
 
     @Autowired
-    public TrainingService(@Qualifier("InMemoryTraining") Repo<Training> trainingRepository) {
+    public TrainingService(@Qualifier("InMemoryTraining") TrainingRepo trainingRepository) {
         this.trainingRepository = trainingRepository;
     }
 
-    public void setTrainingRepository(Repo<Training> trainingRepository) {
+    public void setTrainingRepository(TrainingRepo trainingRepository) {
         this.trainingRepository = trainingRepository;
     }
 

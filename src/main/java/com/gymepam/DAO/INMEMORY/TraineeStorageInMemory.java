@@ -1,13 +1,14 @@
 package com.gymepam.DAO.INMEMORY;
 
-import com.gymepam.DAO.Repo;
+import com.gymepam.DAO.TraineeRepo;
 import com.gymepam.DOMAIN.Trainee;
+import com.gymepam.DOMAIN.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository("InMemoryTrainee")
-public class TraineeStorageInMemory implements Repo<Trainee> {
+public class TraineeStorageInMemory implements TraineeRepo {
 
     private static Map<Long, Trainee> traineeMap = new HashMap<>();
 
@@ -33,5 +34,22 @@ public class TraineeStorageInMemory implements Repo<Trainee> {
     @Override
     public List<Trainee> findAll() {
         return new ArrayList<>(traineeMap.values());
+    }
+
+    @Override
+    public Trainee findTraineeByUserUsername(String username) {
+        List<Trainee> traineeList = new ArrayList<>(traineeMap.values());
+        return traineeList.stream()
+                .filter(trainee -> trainee.getUser().getUserName().equals(username))
+                .findFirst().orElse(null);
+    }
+
+    @Override
+    public void deleteByUserUserName(String username) {
+        List<Trainee> traineeList = new ArrayList<>(traineeMap.values());
+        Trainee trainee = traineeList.stream()
+                .filter(t -> t.getUser().getUserName().equals(username))
+                .findFirst().orElse(null);
+        traineeMap.remove(trainee.getId());
     }
 }

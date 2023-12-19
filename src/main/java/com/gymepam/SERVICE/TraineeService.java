@@ -1,6 +1,6 @@
 package com.gymepam.SERVICE;
 
-import com.gymepam.DAO.Repo;
+import com.gymepam.DAO.TraineeRepo;
 import com.gymepam.DOMAIN.Trainee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -10,14 +10,14 @@ import java.util.List;
 @Service
 public class TraineeService {
 
-    private static Repo<Trainee> traineeRepository;
+    private static TraineeRepo traineeRepository;
 
     @Autowired
-    public TraineeService(@Qualifier("InMemoryTrainee") Repo<Trainee> traineeRepository) {
+    public TraineeService(@Qualifier("InMemoryTrainee") TraineeRepo traineeRepository) {
         this.traineeRepository = traineeRepository;
     }
 
-    public void setTraineeRepository(Repo<Trainee> traineeRepository) {
+    public void setTraineeRepository(TraineeRepo traineeRepository) {
         this.traineeRepository = traineeRepository;
     }
 
@@ -25,13 +25,15 @@ public class TraineeService {
         return traineeRepository.save(trainee);
     }
 
-
     public Trainee getTrainee(Long traineeId) {
         return traineeRepository.findById(traineeId).orElse(null);
     }
 
-
     public List<Trainee> getAllTrainees() {
         return traineeRepository.findAll();
+    }
+
+    public void deleteTrainee(Trainee trainee) {
+        traineeRepository.delete(trainee);
     }
 }

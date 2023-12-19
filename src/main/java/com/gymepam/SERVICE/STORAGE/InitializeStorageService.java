@@ -1,6 +1,7 @@
-package com.gymepam.SERVICE;
+package com.gymepam.SERVICE.STORAGE;
 
 import com.gymepam.DOMAIN.*;
+import com.gymepam.SERVICE.*;
 import com.gymepam.SERVICE.UTIL.generatePassword;
 import com.gymepam.SERVICE.UTIL.generateUserName;
 import org.apache.poi.ss.usermodel.*;

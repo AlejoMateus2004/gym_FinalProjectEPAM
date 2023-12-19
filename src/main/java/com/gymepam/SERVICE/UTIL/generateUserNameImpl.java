@@ -63,13 +63,8 @@ public class generateUserNameImpl implements generateUserName {
     }
     @Override
     public boolean isValidUsername(String username, String firstName, String lastName) {
-
         try{
             Map<String, Integer> usernameCounts = getUsernameCounts();
-
-            if (usernameCounts == null) {
-                return false;
-            }
 
             if (username == null || username.isEmpty()) {
                 return false;
@@ -77,11 +72,11 @@ public class generateUserNameImpl implements generateUserName {
 
             String baseUserName = (firstName + "." + lastName).toLowerCase();
 
-            if (!username.equals(baseUserName) || !username.matches("^[a-z0-9.]+$")) {
+            if (!username.contains(baseUserName) || !username.matches("^[a-z0-9.]+$")) {
                 return false;
             }
 
-            if (usernameCounts.containsKey(username)) {
+            if (usernameCounts!= null && usernameCounts.containsKey(username)) {
                 return false;
             }
 
