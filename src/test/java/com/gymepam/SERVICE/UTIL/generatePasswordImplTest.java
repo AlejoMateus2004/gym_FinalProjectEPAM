@@ -1,17 +1,22 @@
 package com.gymepam.SERVICE.UTIL;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertNotNull;
 
+@ExtendWith(MockitoExtension.class)
 class generatePasswordImplTest {
 
-    @BeforeEach
-    void setUp() {
-    }
+    @InjectMocks
+    private generatePasswordImpl genPassword;
 
     @Test
     void generatePassword() {
+        assertNotNull(genPassword.generatePassword());
+        assertThat(genPassword.generatePassword().length()).isEqualTo(10);
     }
 }

@@ -1,17 +1,18 @@
 package com.gymepam.SERVICE;
 
-import com.gymepam.DAO.Repo;
+import com.gymepam.DAO.TraineeRepo;
+import com.gymepam.DAO.TrainerRepo;
 import com.gymepam.DOMAIN.Trainee;
 import com.gymepam.DOMAIN.User;
+import com.gymepam.SERVICE.UTIL.generatePasswordImpl;
+import com.gymepam.SERVICE.UTIL.generateUserNameImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.LocalDate;
@@ -21,14 +22,21 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class TraineeServiceTest {
 
     @Mock
     @Qualifier("InMemoryTrainee")
-    private Repo<Trainee> traineeRepository;
-
+    private TraineeRepo traineeRepository;
+    @Mock
+    private UserService userService;
+    @InjectMocks
+    private generatePasswordImpl genPassword;
+    @InjectMocks
+    private generateUserNameImpl genUserName;
     @InjectMocks
     private TraineeService traineeService;
     private Trainee trainee;
@@ -39,8 +47,8 @@ class TraineeServiceTest {
         User user = new User();
         user.setFirstName("Alejandro");
         user.setLastName("Mateus");
-        user.setUserName(user.getFirstName().toLowerCase().join(".").join(user.getLastName().toLowerCase()));
-        user.setPassword("absvjdsjds");
+        user.setUserName(genUserName.generateUserName(user.getFirstName(), user.getLastName()));
+        user.setPassword(genPassword.generatePassword());
         user.setIsActive(true);
         trainee.setUser(user);
         trainee.setDateOfBirth(LocalDate.now());
@@ -73,5 +81,14 @@ class TraineeServiceTest {
         assertNotNull(allTrainees);
         assertEquals(trainee, allTrainees.get(0));
         assertThat(allTrainees.size()).isEqualTo(1);
+    }
+
+    @DisplayName("Test delete  Trainee by Id")
+    @Test
+    void deleteTrainee() {
+        willDoNothing().given(traineeRepository).delete(trainee);
+        traineeService.deleteTrainee(trainee);
+        verify(traineeRepository,times(1)).delete(trainee);
+        assertNull(traineeService.getTrainee(trainee.getId()));
     }
 }
