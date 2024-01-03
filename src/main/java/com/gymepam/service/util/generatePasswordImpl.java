@@ -1,4 +1,4 @@
-package com.gymepam.SERVICE.UTIL;
+package com.gymepam.service.util;
 
 import org.springframework.stereotype.Service;
 

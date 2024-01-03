@@ -1,4 +1,4 @@
-package com.gymepam.SERVICE.UTIL;
+package com.gymepam.service.util;
 
 public class encryptPasswordImpl implements encryptPassword {
     @Override

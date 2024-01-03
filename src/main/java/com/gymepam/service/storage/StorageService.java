@@ -1,8 +1,8 @@
-package com.gymepam.SERVICE.STORAGE;
+package com.gymepam.service.storage;
 
-import com.gymepam.SERVICE.TraineeService;
-import com.gymepam.SERVICE.TrainerService;
-import com.gymepam.SERVICE.TrainingService;
+import com.gymepam.service.TraineeService;
+import com.gymepam.service.TrainerService;
+import com.gymepam.service.TrainingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

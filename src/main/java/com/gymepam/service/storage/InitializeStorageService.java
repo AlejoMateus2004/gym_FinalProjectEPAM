@@ -1,9 +1,9 @@
-package com.gymepam.SERVICE.STORAGE;
+package com.gymepam.service.storage;
 
-import com.gymepam.DOMAIN.*;
-import com.gymepam.SERVICE.*;
-import com.gymepam.SERVICE.UTIL.generatePassword;
-import com.gymepam.SERVICE.UTIL.generateUserName;
+import com.gymepam.domain.*;
+import com.gymepam.service.*;
+import com.gymepam.service.util.generatePassword;
+import com.gymepam.service.util.generateUserName;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class InitializeStorageService {
         this.genUserName = genUserName;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void initialize() {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(excelFilePath))) {
             loadDataFromExcel(workbook);
@@ -142,10 +142,10 @@ public class InitializeStorageService {
             Map<String, Object> trainingTypeData = extractDataFromRow(sheet.getRow(0), row);
             Long idFieldFileTrainingType = (Long) trainingTypeData.get("trainingTypeId");
 
-            Training_Type trainingType = getDataTrainingType(trainingTypeData);
+            TrainingType trainingType = getDataTrainingType(trainingTypeData);
 
             if (trainingType != null) {
-                Training_Type result =  trainingTypeService.saveTraining_Type(trainingType);
+                TrainingType result =  trainingTypeService.saveTraining_Type(trainingType);
                 idMap.put(idFieldFileTrainingType, result.getId());
             }
         }
@@ -240,8 +240,8 @@ public class InitializeStorageService {
         return (trainer.getUser() != null) ? trainer : null;
     }
 
-    private Training_Type getDataTrainingType(Map<String, Object> trainingTypeData) {
-        Training_Type trainingType = new Training_Type();
+    private TrainingType getDataTrainingType(Map<String, Object> trainingTypeData) {
+        TrainingType trainingType = new TrainingType();
         trainingType.setId((Long) trainingTypeData.get("trainingTypeId"));
         trainingType.setTrainingTypeName((String) trainingTypeData.get("trainingTypeName"));
         return trainingType;
