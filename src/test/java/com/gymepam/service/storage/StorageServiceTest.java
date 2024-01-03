@@ -1,9 +1,9 @@
-package com.gymepam.SERVICE.STORAGE;
+package com.gymepam.service.storage;
 
-import com.gymepam.DOMAIN.*;
-import com.gymepam.SERVICE.TraineeService;
-import com.gymepam.SERVICE.TrainerService;
-import com.gymepam.SERVICE.TrainingService;
+import com.gymepam.domain.*;
+import com.gymepam.service.TraineeService;
+import com.gymepam.service.TrainerService;
+import com.gymepam.service.TrainingService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -48,7 +48,7 @@ class StorageServiceTest {
         user.setIsActive(true);
         trainer.setUser(user);
 
-        Training_Type trainingType = new Training_Type();
+        TrainingType trainingType = new TrainingType();
         trainingType.setId(new Long(1));
         trainingType.setTrainingTypeName("Weight Lifting");
 

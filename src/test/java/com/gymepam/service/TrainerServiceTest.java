@@ -1,11 +1,10 @@
-package com.gymepam.SERVICE;
+package com.gymepam.service;
 
-import com.gymepam.DAO.TrainerRepo;
-import com.gymepam.DOMAIN.Trainer;
-import com.gymepam.DOMAIN.Training_Type;
-import com.gymepam.DOMAIN.User;
-import com.gymepam.SERVICE.UTIL.generatePasswordImpl;
-import com.gymepam.SERVICE.UTIL.generateUserNameImpl;
+import com.gymepam.dao.TrainerRepo;
+import com.gymepam.domain.Trainer;
+import com.gymepam.domain.TrainingType;
+import com.gymepam.domain.User;
+import com.gymepam.service.util.validatePassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,19 +19,15 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
 @ExtendWith(MockitoExtension.class)
 class TrainerServiceTest {
 
     @Mock
-    @Qualifier("InMemoryTrainer")
     private TrainerRepo trainerRepository;
     @Mock
-    private UserService userService;
-    @InjectMocks
-    private generatePasswordImpl genPassword;
-    @InjectMocks
-    private generateUserNameImpl genUserName;
+    private validatePassword valPassword;
     @InjectMocks
     private TrainerService trainerService;
     private Trainer trainer;
@@ -44,12 +38,12 @@ class TrainerServiceTest {
         User user = new User();
         user.setFirstName("Alejandro");
         user.setLastName("Mateus");
-        user.setUserName(genUserName.generateUserName(user.getFirstName(), user.getLastName()));
-        user.setPassword(genPassword.generatePassword());
+        user.setUserName("alejandro.mateus");
+        user.setPassword("Al3jO123xz");
         user.setIsActive(true);
         trainer.setUser(user);
 
-        Training_Type trainingType = new Training_Type();
+        TrainingType trainingType = new TrainingType();
         trainingType.setId(new Long(1));
         trainingType.setTrainingTypeName("Weight Lifting");
 
@@ -82,5 +76,59 @@ class TrainerServiceTest {
         assertNotNull(allTrainers);
         assertEquals(trainer, allTrainers.get(0));
         assertThat(allTrainers.size()).isEqualTo(1);
+    }
+
+    @DisplayName("Test get Trainer by UserName")
+    @Test
+    void testGetTrainerByUserUsername() {
+        String userName = trainer.getUser().getUserName();
+        when(trainerRepository.findTrainerByUserUsername(userName)).thenReturn(trainer);
+        Trainer expectedValue = trainerService.getTrainerByUserUsername(userName);
+        assertNotNull(expectedValue);
+        assertEquals(trainer.getId(), expectedValue.getId());
+    }
+
+    @DisplayName("Test update password with correct data")
+    @Test
+    void testUpdatePassword() {
+        String username = "alejandro.mateus";
+        String oldPassword = "Al3jO123xz";
+        String newPassword = "newPass123";
+
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(trainer);
+        when(valPassword.validatePassword(trainer.getUser(), oldPassword)).thenReturn(true);
+        when(trainerRepository.save(trainer)).thenReturn(trainer);
+
+        Trainer result = trainerService.updatePassword(username, oldPassword, newPassword);
+
+        assertNotNull(result);
+        assertEquals(newPassword, result.getUser().getPassword());
+    }
+    @DisplayName("Test update password with incorrect data")
+    @Test
+    void testUpdatePasswordTrainerNotFound() {
+        String username = "username";
+        String oldPassword = "oldPass";
+        String newPassword = "newPass";
+
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(null);
+
+        Trainer result = trainerService.updatePassword(username, oldPassword, newPassword);
+
+        assertNull(result);
+    }
+    @DisplayName("Test update password with incorrect oldPassword")
+    @Test
+    void testUpdatePasswordInvalidOldPassword() {
+        String username = "alejandro.mateus";
+        String oldPassword = "wrongOldPass";
+        String newPassword = "newPass";
+
+        when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(trainer);
+        when(valPassword.validatePassword(trainer.getUser(), oldPassword)).thenReturn(false);
+
+        Trainer result = trainerService.updatePassword(username, oldPassword, newPassword);
+
+        assertNull(result);
     }
 }

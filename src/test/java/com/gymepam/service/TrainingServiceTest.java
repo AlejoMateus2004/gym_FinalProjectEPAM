@@ -1,10 +1,7 @@
-package com.gymepam.SERVICE;
+package com.gymepam.service;
 
-import com.gymepam.DAO.TrainerRepo;
-import com.gymepam.DAO.TrainingRepo;
-import com.gymepam.DOMAIN.*;
-import com.gymepam.SERVICE.UTIL.generatePasswordImpl;
-import com.gymepam.SERVICE.UTIL.generateUserNameImpl;
+import com.gymepam.dao.TrainingRepo;
+import com.gymepam.domain.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,7 +9,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Qualifier;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
@@ -25,15 +21,8 @@ import static org.mockito.Mockito.when;
 class TrainingServiceTest {
 
     @Mock
-    @Qualifier("InMemoryTraining")
     private TrainingRepo trainingRepository;
 
-    @Mock
-    private UserService userService;
-    @InjectMocks
-    private generatePasswordImpl genPassword;
-    @InjectMocks
-    private generateUserNameImpl genUserName;
     @InjectMocks
     private TrainingService trainingService;
     private Training training;
@@ -46,12 +35,12 @@ class TrainingServiceTest {
         User user = new User();
         user.setFirstName("Juan");
         user.setLastName("Perez");
-        user.setUserName(genUserName.generateUserName(user.getFirstName(), user.getLastName()));
-        user.setPassword(genPassword.generatePassword());
+        user.setUserName("juan.perez");
+        user.setPassword("JuanPerez1");
         user.setIsActive(true);
         trainer.setUser(user);
 
-        Training_Type trainingType = new Training_Type();
+        TrainingType trainingType = new TrainingType();
         trainingType.setId(new Long(1));
         trainingType.setTrainingTypeName("Weight Lifting");
 
@@ -61,8 +50,8 @@ class TrainingServiceTest {
         User user2 = new User();
         user2.setFirstName("Alejandro");
         user2.setLastName("Mateus");
-        user2.setUserName(genUserName.generateUserName(user2.getFirstName(), user2.getLastName()));
-        user2.setPassword(genPassword.generatePassword());
+        user2.setUserName("alejandro.mateus");
+        user2.setPassword("alejo123A");
         user2.setIsActive(true);
         trainee.setUser(user2);
         trainee.setDateOfBirth(LocalDate.now());
@@ -99,6 +88,26 @@ class TrainingServiceTest {
     void getAllTrainings() {
         when(trainingRepository.findAll()).thenReturn(Arrays.asList(training));
         List<Training> allTrainings = trainingService.getAllTrainings();
+        assertNotNull(allTrainings);
+        assertEquals(training, allTrainings.get(0));
+        assertThat(allTrainings.size()).isEqualTo(1);
+    }
+
+    @Test
+    void getAllTrainingsByTrainee() {
+        String userName = "juan.perez";
+        when(trainingRepository.findTrainingByTrainee(userName)).thenReturn(Arrays.asList(training));
+        List<Training> allTrainings = trainingService.getAllTrainingsByTrainee(userName);
+        assertNotNull(allTrainings);
+        assertEquals(training, allTrainings.get(0));
+        assertThat(allTrainings.size()).isEqualTo(1);
+    }
+
+    @Test
+    void getAllTrainingsByTrainer() {
+        String userName = "alejandro.mateus";
+        when(trainingRepository.findTrainingByTrainer(userName)).thenReturn(Arrays.asList(training));
+        List<Training> allTrainings = trainingService.getAllTrainingsByTrainer(userName);
         assertNotNull(allTrainings);
         assertEquals(training, allTrainings.get(0));
         assertThat(allTrainings.size()).isEqualTo(1);

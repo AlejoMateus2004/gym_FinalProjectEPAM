@@ -1,7 +1,7 @@
-package com.gymepam.SERVICE.UTIL;
+package com.gymepam.service.util;
 
-import com.gymepam.DOMAIN.User;
-import com.gymepam.SERVICE.UserService;
+import com.gymepam.domain.User;
+import com.gymepam.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
