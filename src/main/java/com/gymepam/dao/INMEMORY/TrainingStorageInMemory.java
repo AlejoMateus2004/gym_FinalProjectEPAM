@@ -1,12 +1,14 @@
-package com.gymepam.DAO.INMEMORY;
+package com.gymepam.dao.INMEMORY;
 
-import com.gymepam.DAO.TrainingRepo;
-import com.gymepam.DOMAIN.Training;
+import com.gymepam.dao.TrainingRepo;
+import com.gymepam.domain.Training;
+import com.gymepam.domain.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Repository("InMemoryTraining")
+@Repository
 public class TrainingStorageInMemory implements TrainingRepo {
 
     private static Map<Long, Training> trainingMap = new HashMap<>();
@@ -34,4 +36,19 @@ public class TrainingStorageInMemory implements TrainingRepo {
     public List<Training> findAll() {
         return new ArrayList<>(trainingMap.values());
     }
+
+    @Override
+    public List<Training> findTrainingByTrainee(String username) {
+        return trainingMap.values().stream()
+                .filter(t -> t.getTrainee().getUser().getUserName().equals(username))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Training> findTrainingByTrainer(String username) {
+        return trainingMap.values().stream()
+                .filter(t -> t.getTrainer().getUser().getUserName().equals(username))
+                .collect(Collectors.toList());
+    }
+
 }

@@ -1,15 +1,14 @@
-package com.gymepam.DOMAIN;
+package com.gymepam.domain;
 
 import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
+
 @Data
 @Entity
-@Table(name = "Trainee")
-public class Trainee implements Serializable {
-
+@Table(name = "Trainer")
+public class Trainer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", nullable = false)
@@ -19,9 +18,7 @@ public class Trainee implements Serializable {
     @JoinColumn(name = "userId", nullable = false)
     private User user;
 
-    @Column(name = "dateOfBirth", nullable = false)
-    private LocalDate dateOfBirth;
-
-    @Column(name = "address", nullable = false)
-    private String address;
+    @ManyToOne
+    @JoinColumn(name = "specializationId", nullable = false)
+    private TrainingType trainingType;
 }

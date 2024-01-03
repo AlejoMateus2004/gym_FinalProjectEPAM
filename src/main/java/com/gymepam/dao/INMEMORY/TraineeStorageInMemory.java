@@ -1,13 +1,12 @@
-package com.gymepam.DAO.INMEMORY;
+package com.gymepam.dao.INMEMORY;
 
-import com.gymepam.DAO.TraineeRepo;
-import com.gymepam.DOMAIN.Trainee;
-import com.gymepam.DOMAIN.User;
+import com.gymepam.dao.TraineeRepo;
+import com.gymepam.domain.Trainee;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Repository("InMemoryTrainee")
+@Repository
 public class TraineeStorageInMemory implements TraineeRepo {
 
     private static Map<Long, Trainee> traineeMap = new HashMap<>();

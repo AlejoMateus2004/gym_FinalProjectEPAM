@@ -1,12 +1,12 @@
-package com.gymepam.DAO;
+package com.gymepam.dao;
 
-import com.gymepam.DOMAIN.Trainee;
+import com.gymepam.domain.Trainee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-@Repository("JPATrainee")
+@Repository
 public interface TraineeRepository extends JpaRepository<Trainee, Long>, TraineeRepo{
     @Query("DELETE FROM Trainee t WHERE t.user.userName = :username")
     void deleteByUserUserName(@Param("username") String username);

@@ -1,4 +1,4 @@
-package com.gymepam.DOMAIN;
+package com.gymepam.domain;
 
 import lombok.Data;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 @Entity
 @Table(name = "Training_Type")
-public class Training_Type implements Serializable {
+public class TrainingType implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", nullable = false)

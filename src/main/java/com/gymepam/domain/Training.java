@@ -1,4 +1,4 @@
-package com.gymepam.DOMAIN;
+package com.gymepam.domain;
 
 import lombok.Data;
 import lombok.Setter;
@@ -30,7 +30,7 @@ public class Training implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "trainingTypeId", nullable = false)
-    private Training_Type trainingType;
+    private TrainingType trainingType;
 
     @Column(name = "trainingDate", nullable = false)
     private LocalDate trainingDate;

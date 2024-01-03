@@ -1,8 +1,6 @@
-package com.gymepam.DAO;
+package com.gymepam.dao;
 
-import com.gymepam.DOMAIN.Trainee;
-import com.gymepam.DOMAIN.User;
-import org.springframework.data.repository.query.Param;
+import com.gymepam.domain.Trainee;
 
 import java.util.List;
 import java.util.Optional;

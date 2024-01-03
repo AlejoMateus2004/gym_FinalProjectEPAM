@@ -1,6 +1,6 @@
-package com.gymepam.DAO;
+package com.gymepam.dao;
 
-import com.gymepam.DOMAIN.Trainee2Trainer;
+import com.gymepam.domain.Trainee2Trainer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

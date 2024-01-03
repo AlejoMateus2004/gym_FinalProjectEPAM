@@ -1,6 +1,6 @@
-package com.gymepam.DAO;
+package com.gymepam.dao;
 
-import com.gymepam.DOMAIN.Training;
+import com.gymepam.domain.Training;
 
 import java.util.List;
 import java.util.Optional;
@@ -10,6 +10,8 @@ public interface TrainingRepo {
     Optional<Training> findById(Long value);
     void delete(Training value);
     List<Training> findAll();
+    List<Training> findTrainingByTrainee(String username);
+    List<Training> findTrainingByTrainer(String username);
 
 
 }
