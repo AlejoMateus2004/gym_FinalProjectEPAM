@@ -7,7 +7,9 @@ import java.io.Serializable;
 
 @Data
 @Entity
-@Table(name = "Trainee2Trainer")
+@Table(name = "Trainee2Trainer", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"traineeId", "trainerId"})
+})
 public class Trainee2Trainer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,4 +24,12 @@ public class Trainee2Trainer implements Serializable {
     @JoinColumn(name = "trainerId", nullable = false)
     private Trainer trainer;
 
+    @Override
+    public String toString() {
+        return "Trainee2Trainer{" +
+                "Id=" + Id +
+                ", trainee=" + trainee.getUser().getUserName() +
+                ", trainer=" + trainer.getUser().getUserName() +
+                '}';
+    }
 }

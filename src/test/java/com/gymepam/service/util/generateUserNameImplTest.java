@@ -51,13 +51,5 @@ class generateUserNameImplTest {
         assertThat(userName).isEqualTo(user.getUserName()+2);
     }
 
-    @Test
-    void isValidUsername() {
-        when(userService.getAllUserNames()).thenReturn(listUserNames);
-        String username =user.getUserName();
-        assertThat(genUserName.isValidUsername(username,user.getFirstName(),user.getLastName())).isEqualTo(false);
-        username =user.getUserName()+"2";
-        assertThat(genUserName.isValidUsername(username,user.getFirstName(),user.getLastName())).isEqualTo(true);
 
-    }
 }

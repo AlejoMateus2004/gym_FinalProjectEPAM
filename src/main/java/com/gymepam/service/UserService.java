@@ -16,22 +16,16 @@ public class UserService {
     public void setuserRepository(UserRepo userRepository) {
         this.userRepository = userRepository;
     }
+
     @Transactional
-    public User saveUser(User User) {
-        return userRepository.save(User);
-    }
-    @Transactional(readOnly = true)
-    public User getUser(Long UserId) {
-        return userRepository.findById(UserId).orElse(null);
+    public User saveUser(User user){
+        return userRepository.save(user);
     }
     @Transactional(readOnly = true)
     public User getUserByUsername(String username) {
         return userRepository.findByUserName(username).orElse(null);
     }
-    @Transactional(readOnly = true)
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
+
     @Transactional(readOnly = true)
     public List<String> getAllUserNames() {
         return userRepository.getAllUsernames();

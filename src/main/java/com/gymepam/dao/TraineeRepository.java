@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TraineeRepository extends JpaRepository<Trainee, Long>, TraineeRepo{
-    @Query("DELETE FROM Trainee t WHERE t.user.userName = :username")
     void deleteByUserUserName(@Param("username") String username);
 
     @Query("SELECT t FROM Trainee t WHERE t.user.userName = :username")

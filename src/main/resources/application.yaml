@@ -18,7 +18,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     database-platform: org.hibernate.dialect.MySQL8Dialect
-    show-sql: true
+    show-sql: false
+    hibernate:
+      ddl-auto: create
   servlet:
     multipart:
       max-file-size: 20MB
@@ -29,3 +31,4 @@ spring:
   profiles:
     active: jpa
 
+validate.password: bcrypt

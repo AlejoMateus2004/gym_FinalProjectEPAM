@@ -1,5 +1,7 @@
 package com.gymepam.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -23,6 +25,7 @@ public class User implements Serializable {
     @Column(name = "userName", unique = true, nullable = false )
     private String userName;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 

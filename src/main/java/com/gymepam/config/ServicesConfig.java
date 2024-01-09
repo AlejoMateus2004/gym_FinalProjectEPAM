@@ -3,12 +3,36 @@ package com.gymepam.config;
 import com.gymepam.dao.*;
 import com.gymepam.dao.INMEMORY.*;
 import com.gymepam.service.util.validatePassword;
+import com.gymepam.service.util.validatePasswordBCryptImpl;
 import com.gymepam.service.util.validatePasswordImpl;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
 @ComponentScan(basePackages = "com.gymepam")
-public class Config {
+public class ServicesConfig {
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @DependsOn("passwordEncoder")
+    @Primary
+    @ConditionalOnProperty(name = "validate.password", havingValue = "bcrypt")
+    public validatePassword validatePasswordWithBCrypt(validatePasswordBCryptImpl validatePasswordBCryptImpl){
+        return validatePasswordBCryptImpl;
+    }
+
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "validate.password", havingValue = "nobcrypt")
+    public validatePassword validatePassword(validatePasswordImpl validatePasswordImpl){
+        return validatePasswordImpl;
+    }
 
     @Bean
     @Primary
@@ -80,9 +104,6 @@ public class Config {
         return userStorageInMemory;
     }
 
-    @Bean
-    @Primary
-    public validatePassword validatePassword(validatePasswordImpl validatePasswordImpl){
-        return validatePasswordImpl;
-    }
+
+
 }

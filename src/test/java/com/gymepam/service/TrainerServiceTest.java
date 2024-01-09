@@ -1,9 +1,12 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainerRepo;
+import com.gymepam.domain.Trainee;
 import com.gymepam.domain.Trainer;
 import com.gymepam.domain.TrainingType;
 import com.gymepam.domain.User;
+import com.gymepam.service.util.encryptPassword;
+import com.gymepam.service.util.generateUserName;
 import com.gymepam.service.util.validatePassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -28,6 +32,10 @@ class TrainerServiceTest {
     private TrainerRepo trainerRepository;
     @Mock
     private validatePassword valPassword;
+    @Mock
+    private encryptPassword encryptPass;
+    @Mock
+    private generateUserName genUserName;
     @InjectMocks
     private TrainerService trainerService;
     private Trainer trainer;
@@ -48,16 +56,43 @@ class TrainerServiceTest {
         trainingType.setTrainingTypeName("Weight Lifting");
 
         trainer.setTrainingType(trainingType);
+        trainer.setTraineeList(new ArrayList<>());
     }
 
 
     @DisplayName("Test save Trainer")
     @Test
     void saveTrainer() {
+        when(genUserName.setUserName(trainer.getUser())).thenReturn("alejandro.mateus");
+        when(trainerRepository.findTrainerByUserUsername("alejandro.mateus")).thenReturn(null);
+        when(encryptPass.encryptPassword("Al3jO123xz")).thenReturn("Al3jO123xz");
         when(trainerRepository.save(trainer)).thenReturn(trainer);
-        Trainer expectedValue = trainerService.saveTrainer(trainer);
-        assertNotNull(expectedValue);
-        assertEquals(trainer, expectedValue);
+
+        Trainer result = trainerService.saveTrainer(trainer);
+
+        assertNotNull(result);
+        assertEquals("alejandro.mateus", result.getUser().getUserName());
+        assertEquals("Al3jO123xz", result.getUser().getPassword());
+        verify(trainerRepository, times(1)).save(trainer);
+    }
+    @DisplayName("Test update Trainer")
+    @Test
+    void testUpdateTrainer() {
+        Trainer updatedTrainer = trainer;
+
+        TrainingType trainingType = new TrainingType();
+        trainingType.setId(new Long(2));
+        trainingType.setTrainingTypeName("Cardio");
+        updatedTrainer.setTrainingType(trainingType);
+
+        when(trainerRepository.findTrainerByUserUsername("alejandro.mateus")).thenReturn(trainer);
+        when(trainerRepository.save(updatedTrainer)).thenReturn(updatedTrainer);
+
+        Trainer result = trainerService.updateTrainer(updatedTrainer);
+
+        assertNotNull(result);
+        assertEquals("Cardio", result.getTrainingType().getTrainingTypeName());
+        verify(trainerRepository, times(1)).save(updatedTrainer);
     }
     @DisplayName("Test get Trainer")
     @Test
@@ -95,8 +130,10 @@ class TrainerServiceTest {
         String oldPassword = "Al3jO123xz";
         String newPassword = "newPass123";
 
+
         when(trainerRepository.findTrainerByUserUsername(username)).thenReturn(trainer);
         when(valPassword.validatePassword(trainer.getUser(), oldPassword)).thenReturn(true);
+        when(encryptPass.encryptPassword("newPass123")).thenReturn("newPass123");
         when(trainerRepository.save(trainer)).thenReturn(trainer);
 
         Trainer result = trainerService.updatePassword(username, oldPassword, newPassword);
@@ -130,5 +167,16 @@ class TrainerServiceTest {
         Trainer result = trainerService.updatePassword(username, oldPassword, newPassword);
 
         assertNull(result);
+    }
+
+    @DisplayName("Test, get a list of trainers who have no associations with trainees")
+    @Test
+    void testGetTrainerByTraineeListEmpty() {
+        when(trainerRepository.findTrainersByUserIsActiveAndTraineeListIsEmpty()).thenReturn(Arrays.asList(trainer));
+        List<Trainer> trainers = trainerService.getTrainerByTraineeListEmpty();
+        assertNotNull(trainers);
+        assertEquals(trainer, trainers.get(0));
+        assertThat(trainers.size()).isEqualTo(1);
+        assertThat(trainers.get(0).getTraineeList()).isEmpty();
     }
 }

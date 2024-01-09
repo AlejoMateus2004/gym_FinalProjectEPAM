@@ -2,13 +2,10 @@ package com.gymepam.service.storage;
 
 import com.gymepam.domain.*;
 import com.gymepam.service.*;
-import com.gymepam.service.util.generatePassword;
-import com.gymepam.service.util.generateUserName;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -28,14 +25,15 @@ public class InitializeStorageService {
     @Value("${initializationStorageFile.path}")
     private String excelFilePath;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     private final StorageService storageService;
     private final TraineeService traineeService;
     private final TrainerService trainerService;
+    private final UserService userService;
     private final TrainingService trainingService;
     private final TrainingTypeService trainingTypeService;
-    private final UserService userService;
-    private final generatePassword genPassword;
-    private final generateUserName genUserName;
 
     @Autowired
     public InitializeStorageService(
@@ -44,9 +42,7 @@ public class InitializeStorageService {
             TrainerService trainerService,
             TrainingService trainingService,
             TrainingTypeService trainingTypeService,
-            UserService userService,
-            @Qualifier("Gen10Password") generatePassword genPassword,
-            @Qualifier("manualUserName") generateUserName genUserName
+            UserService userService
     ) {
         this.storageService = storageService;
         this.traineeService = traineeService;
@@ -54,15 +50,12 @@ public class InitializeStorageService {
         this.trainingService = trainingService;
         this.trainingTypeService = trainingTypeService;
         this.userService = userService;
-        this.genPassword = genPassword;
-        this.genUserName = genUserName;
     }
 
-//    @PostConstruct
+    @PostConstruct
     public void initialize() {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(excelFilePath))) {
             loadDataFromExcel(workbook);
-            storageService.loadDbInMemory();
             LOGGER.info("Data loaded from file");
         } catch (Exception e) {
             LOGGER.error("Error loading data from file", e);
@@ -75,9 +68,7 @@ public class InitializeStorageService {
                 Sheet sheet = workbook.getSheetAt(i);
                 String sheetName = sheet.getSheetName();
 
-                if ("User".equals(sheetName)) {
-                    processUserSheet(sheet);
-                } else if ("Trainee".equals(sheetName)) {
+                if ("Trainee".equals(sheetName)) {
                     processTraineeSheet(sheet);
                 } else if ("Training_Type".equals(sheetName)) {
                     processTrainingTypeSheet(sheet);
@@ -94,22 +85,6 @@ public class InitializeStorageService {
             LOGGER.error("Error while File is uploaded", e);
         }
     }
-    // Process User sheet
-    private void processUserSheet(Sheet sheet) {
-        Map<Long, Long> idMap = new HashMap<>();
-        for (Row row : sheet) {
-            if (row.getRowNum() == 0) {
-                continue;
-            }
-
-            Map<String, Object> userData = extractDataFromRow(sheet.getRow(0), row);
-            Long idFieldFileU = (Long) userData.get("userId");
-            User user = getUser(userData);
-            User result = userService.saveUser(user);
-            idMap.put(idFieldFileU, result.getId());
-        }
-        idsMap.put("User", idMap);
-    }
     // Process Trainee sheet
     private void processTraineeSheet(Sheet sheet) {
         Map<Long, Long> idMap = new HashMap<>();
@@ -119,12 +94,19 @@ public class InitializeStorageService {
             }
 
             Map<String, Object> traineeData = extractDataFromRow(sheet.getRow(0), row);
+            if (traineeData == null) {
+                continue;
+            }
             Long idFieldFileTrainee = (Long) traineeData.get("Id");
-            traineeData.put("userId", idsMap.get("User").get(traineeData.get("userId")));
+
 
             Trainee trainee = getDataTrainee(traineeData);
             if (trainee != null) {
                 Trainee result = traineeService.saveTrainee(trainee);
+
+                if (activeProfile.equals("inMemory")) {
+                    userService.saveUser(result.getUser());
+                }
                 idMap.put(idFieldFileTrainee, result.getId());
             }
         }
@@ -140,6 +122,9 @@ public class InitializeStorageService {
             }
 
             Map<String, Object> trainingTypeData = extractDataFromRow(sheet.getRow(0), row);
+            if (trainingTypeData == null) {
+                continue;
+            }
             Long idFieldFileTrainingType = (Long) trainingTypeData.get("trainingTypeId");
 
             TrainingType trainingType = getDataTrainingType(trainingTypeData);
@@ -161,15 +146,20 @@ public class InitializeStorageService {
             }
 
             Map<String, Object> trainerData = extractDataFromRow(sheet.getRow(0), row);
+            if (trainerData == null) {
+                continue;
+            }
             Long idFieldFileTrainer = (Long) trainerData.get("Id");
 
-            trainerData.put("userId", idsMap.get("User").get(trainerData.get("userId")));
             trainerData.put("trainingTypeId", idsMap.get("TrainingType").get(trainerData.get("trainingTypeId")));
 
 
             Trainer trainer = getDataTrainer(trainerData);
             if (trainer != null) {
                 Trainer result =trainerService.saveTrainer(trainer);
+                if (activeProfile.equals("inMemory")) {
+                    userService.saveUser(result.getUser());
+                }
                 idMap.put(idFieldFileTrainer, result.getId());
             }
         }
@@ -184,6 +174,9 @@ public class InitializeStorageService {
             }
 
             Map<String, Object> trainingData = extractDataFromRow(sheet.getRow(0), row);
+            if (trainingData == null) {
+                continue;
+            }
             trainingData.put("TraineeId", idsMap.get("Trainee").get(trainingData.get("TraineeId")));
             trainingData.put("TrainerId", idsMap.get("Trainer").get(trainingData.get("TrainerId")));
             trainingData.put("trainingTypeId", idsMap.get("TrainingType").get(trainingData.get("trainingTypeId")));
@@ -202,7 +195,9 @@ public class InitializeStorageService {
             Cell dataCell = dataRow.getCell(j, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
             String header = getCellValue(headerRow.getCell(j)).toString();
             Object cellValue = getCellValue(dataCell);
-
+            if (cellValue == null || cellValue == "") {
+                return null;
+            }
             data.put(header, cellValue);
         }
         return data;
@@ -228,7 +223,7 @@ public class InitializeStorageService {
         trainee.setId((Long) traineeData.get("Id"));
         trainee.setAddress((String) traineeData.get("address"));
         trainee.setDateOfBirth((LocalDate) traineeData.get("dateOfBirth"));
-        trainee.setUser(userService.getUser((Long) traineeData.get("userId")));
+        trainee.setUser(getUser(traineeData));
         return (trainee.getUser() != null) ? trainee : null;
     }
 
@@ -236,7 +231,7 @@ public class InitializeStorageService {
         Trainer trainer = new Trainer();
         trainer.setId((Long) trainerData.get("Id"));
         trainer.setTrainingType(trainingTypeService.getTraining_Type((Long) trainerData.get("trainingTypeId")));
-        trainer.setUser(userService.getUser((Long) trainerData.get("userId")));
+        trainer.setUser(getUser(trainerData));
         return (trainer.getUser() != null) ? trainer : null;
     }
 
@@ -264,17 +259,11 @@ public class InitializeStorageService {
         user.setId((Long) userData.get("userId"));
         user.setFirstName((String) userData.get("firstName"));
         user.setLastName((String) userData.get("lastName"));
-        user.setUserName(setUserUserName(user, (String) userData.get("userName")));
-        user.setPassword(genPassword.generatePassword());
+        user.setUserName((String) userData.get("userName"));
+        user.setPassword((String) userData.get("password"));
         user.setIsActive((Boolean.parseBoolean(userData.get("isActive").toString())));
         return user;
     }
 
-    private String setUserUserName(User user, String inputUserName) {
-        String userName = genUserName.isValidUsername(inputUserName, user.getFirstName(), user.getLastName()) ?
-                inputUserName :
-                genUserName.generateUserName(user.getFirstName(), user.getLastName());
-        user.setUserName(userName);
-        return userName;
-    }
+
 }

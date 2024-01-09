@@ -12,5 +12,6 @@ public interface TrainerRepo {
     List<Trainer> findAll();
     Trainer findTrainerByUserUsername(String username);
     void deleteByUserUserName(String username);
+    List<Trainer> findTrainersByUserIsActiveAndTraineeListIsEmpty();
 
 }

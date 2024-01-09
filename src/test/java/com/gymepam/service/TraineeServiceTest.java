@@ -3,6 +3,8 @@ package com.gymepam.service;
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.Trainee;
 import com.gymepam.domain.User;
+import com.gymepam.service.util.encryptPassword;
+import com.gymepam.service.util.generateUserName;
 import com.gymepam.service.util.validatePassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -29,6 +32,10 @@ class TraineeServiceTest {
     private TraineeRepo traineeRepository;
     @Mock
     private validatePassword valPassword;
+    @Mock
+    private encryptPassword encryptPass;
+    @Mock
+    private generateUserName genUserName;
     @InjectMocks
     private TraineeService traineeService;
     private Trainee trainee;
@@ -51,10 +58,17 @@ class TraineeServiceTest {
     @DisplayName("Test save Trainee")
     @Test
     void testSaveTrainee() {
+        when(genUserName.setUserName(trainee.getUser())).thenReturn("alejandro.mateus");
+        when(traineeRepository.findTraineeByUserUsername("alejandro.mateus")).thenReturn(null);
+        when(encryptPass.encryptPassword("Al3jO123xz")).thenReturn("Al3jO123xz");
         when(traineeRepository.save(trainee)).thenReturn(trainee);
-        Trainee expectedValue = traineeService.saveTrainee(trainee);
-        assertNotNull(expectedValue);
-        assertEquals(trainee, expectedValue);
+
+        Trainee result = traineeService.saveTrainee(trainee);
+
+        assertNotNull(result);
+        assertEquals("alejandro.mateus", result.getUser().getUserName());
+        assertEquals("Al3jO123xz", result.getUser().getPassword());
+        verify(traineeRepository, times(1)).save(trainee);
     }
     @DisplayName("Test get Trainee")
     @Test
@@ -107,8 +121,10 @@ class TraineeServiceTest {
         String oldPassword = "Al3jO123xz";
         String newPassword = "newPass123";
 
+
         when(traineeRepository.findTraineeByUserUsername(username)).thenReturn(trainee);
         when(valPassword.validatePassword(trainee.getUser(), oldPassword)).thenReturn(true);
+        when(encryptPass.encryptPassword("newPass123")).thenReturn("newPass123");
         when(traineeRepository.save(trainee)).thenReturn(trainee);
 
         Trainee result = traineeService.updatePassword(username, oldPassword, newPassword);
@@ -142,5 +158,19 @@ class TraineeServiceTest {
         Trainee result = traineeService.updatePassword(username, oldPassword, newPassword);
 
         assertNull(result);
+    }
+    @DisplayName("Test update Trainee")
+    @Test
+    void testUpdateTrainee() {
+        Trainee updatedTrainee = trainee;
+        updatedTrainee.setAddress("CRA 20");
+        when(traineeRepository.findTraineeByUserUsername("alejandro.mateus")).thenReturn(trainee);
+        when(traineeRepository.save(updatedTrainee)).thenReturn(updatedTrainee);
+
+        Trainee result = traineeService.updateTrainee(updatedTrainee);
+
+        assertNotNull(result);
+        assertEquals("CRA 20", result.getAddress());
+        verify(traineeRepository, times(1)).save(updatedTrainee);
     }
 }

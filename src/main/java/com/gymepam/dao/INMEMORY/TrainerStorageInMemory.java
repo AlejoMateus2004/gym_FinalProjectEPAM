@@ -5,6 +5,7 @@ import com.gymepam.domain.Trainer;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 public class TrainerStorageInMemory implements TrainerRepo {
@@ -50,5 +51,15 @@ public class TrainerStorageInMemory implements TrainerRepo {
                 .filter(t -> t.getUser().getUserName().equals(username))
                 .findFirst().orElse(null);
         trainerMap.remove(trainer.getId());
+    }
+
+    @Override
+    public List<Trainer> findTrainersByUserIsActiveAndTraineeListIsEmpty() {
+
+        List<Trainer> trainerList = new ArrayList<>(trainerMap.values());
+        return trainerList.stream()
+                .filter(trainer -> trainer.getUser().getIsActive().equals(true) && trainer.getTraineeList().isEmpty())
+                .collect(Collectors.toList());
+
     }
 }

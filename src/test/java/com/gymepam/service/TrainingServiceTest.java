@@ -68,7 +68,7 @@ class TrainingServiceTest {
 
     @DisplayName("Test save Training")
     @Test
-    void saveTraining() {
+    void testSaveTraining() {
         when(trainingRepository.save(training)).thenReturn(training);
         Training expectedValue = trainingService.saveTraining(training);
         assertNotNull(expectedValue);
@@ -76,7 +76,7 @@ class TrainingServiceTest {
     }
     @DisplayName("Test get Training")
     @Test
-    void getTraining() {
+    void testGetTraining() {
         when(trainingRepository.findById(training.getId())).thenReturn(Optional.ofNullable(training));
         Training expectedValue = trainingService.getTraining(training.getId());
         assertNotNull(expectedValue);
@@ -85,7 +85,7 @@ class TrainingServiceTest {
 
     @DisplayName("Test get all Trainings")
     @Test
-    void getAllTrainings() {
+    void testGetAllTrainings() {
         when(trainingRepository.findAll()).thenReturn(Arrays.asList(training));
         List<Training> allTrainings = trainingService.getAllTrainings();
         assertNotNull(allTrainings);
@@ -94,7 +94,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void getAllTrainingsByTrainee() {
+    void testGetAllTrainingsByTrainee() {
         String userName = "juan.perez";
         when(trainingRepository.findTrainingByTrainee(userName)).thenReturn(Arrays.asList(training));
         List<Training> allTrainings = trainingService.getAllTrainingsByTrainee(userName);
@@ -104,7 +104,7 @@ class TrainingServiceTest {
     }
 
     @Test
-    void getAllTrainingsByTrainer() {
+    void testGetAllTrainingsByTrainer() {
         String userName = "alejandro.mateus";
         when(trainingRepository.findTrainingByTrainer(userName)).thenReturn(Arrays.asList(training));
         List<Training> allTrainings = trainingService.getAllTrainingsByTrainer(userName);

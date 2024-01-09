@@ -1,5 +1,6 @@
 package com.gymepam.service.util;
 
+import com.gymepam.domain.User;
 import com.gymepam.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,7 @@ public class generateUserNameImpl implements generateUserName {
         }
     }
 
-    @Override
+
     public String generateUserName(String firstName, String lastName) {
 
         try{
@@ -61,31 +62,12 @@ public class generateUserNameImpl implements generateUserName {
             throw new RuntimeException("Error generating username", e);
         }
     }
+
+
     @Override
-    public boolean isValidUsername(String username, String firstName, String lastName) {
-        try{
-            Map<String, Integer> usernameCounts = getUsernameCounts();
-
-            if (username == null || username.isEmpty()) {
-                return false;
-            }
-
-            String baseUserName = (firstName + "." + lastName).toLowerCase();
-
-            if (!username.contains(baseUserName) || !username.matches("^[a-z0-9.]+$")) {
-                return false;
-            }
-
-            if (usernameCounts!= null && usernameCounts.containsKey(username)) {
-                return false;
-            }
-
-            return true;
-
-        }catch(Exception e){
-            logger.error("Error validating username {}", username, e);
-            throw new RuntimeException("Error validating username", e);
-        }
+    public String setUserName(User user) {
+        String userName = generateUserName(user.getFirstName(), user.getLastName());
+        return userName;
     }
 
 }

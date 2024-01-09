@@ -1,6 +1,7 @@
 package com.gymepam.service.util;
 
+import com.gymepam.domain.User;
+
 public interface generateUserName {
-    String generateUserName(String firstName, String lastName);
-    boolean isValidUsername(String username, String FirstName, String LastName);
+    String setUserName(User user);
 }

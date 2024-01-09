@@ -17,7 +17,7 @@ public class UsernamePasswordMatchingImpl implements UsernamePasswordMatching {
     private static final Logger logger = LoggerFactory.getLogger(UsernamePasswordMatching.class);
 
     @Autowired
-    private validatePassword validatePassword;
+    private validatePassword validatePass;
 
     @Autowired
     private TraineeService traineeService;
@@ -48,7 +48,7 @@ public class UsernamePasswordMatchingImpl implements UsernamePasswordMatching {
                 return null;
             }
 
-            if (validatePassword.validatePassword(user, password)) {
+            if (validatePass.validatePassword(user, password)) {
                 logger.info("Authentication successful for user: {}", username);
                 return user;
             } else {
