@@ -1,4 +1,4 @@
-package com.gymepam.dao.INMEMORY;
+package com.gymepam.dao.inmemory;
 
 import com.gymepam.dao.TrainerRepo;
 import com.gymepam.domain.Trainer;
@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Repository
 public class TrainerStorageInMemory implements TrainerRepo {
 
     private static Map<Long, Trainer> trainerMap = new HashMap<>();

@@ -1,21 +1,17 @@
 package com.gymepam.config;
 
 
-import com.gymepam.service.util.validatePassword;
-import com.gymepam.service.util.validatePasswordBCryptImpl;
-import com.gymepam.service.util.validatePasswordImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+//@EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;

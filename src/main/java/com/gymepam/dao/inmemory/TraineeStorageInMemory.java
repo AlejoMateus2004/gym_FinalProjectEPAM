@@ -1,12 +1,14 @@
-package com.gymepam.dao.INMEMORY;
+package com.gymepam.dao.inmemory;
 
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.Trainee;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
 @Repository
+@ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
 public class TraineeStorageInMemory implements TraineeRepo {
 
     private static Map<Long, Trainee> traineeMap = new HashMap<>();
