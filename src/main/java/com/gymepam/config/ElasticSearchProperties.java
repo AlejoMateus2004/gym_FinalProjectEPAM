@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties("database.elastic")
+@ConfigurationProperties( prefix = "database.elastic")
 @Data
 public class ElasticSearchProperties {
 

@@ -40,6 +40,7 @@ public class RepoConfig {
     }
 
 //    @Bean
+//    @Primary
 //    @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
 //    public TraineeRepo inMemoryTraineeRepoBean() {
 //        return new TraineeStorageInMemory();
