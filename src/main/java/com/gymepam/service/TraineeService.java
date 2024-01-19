@@ -5,7 +5,7 @@ import com.gymepam.domain.Trainee;
 import com.gymepam.domain.User;
 import com.gymepam.service.util.encryptPassword;
 import com.gymepam.service.util.generateUserName;
-import com.gymepam.service.util.validatePassword;
+import com.gymepam.service.util.ValidatePassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class TraineeService {
     @Autowired
     private TraineeRepo traineeRepository;
     @Autowired
-    private validatePassword valPassword;
+    private ValidatePassword valPassword;
     @Autowired
     private encryptPassword encryptPass;
     @Autowired
