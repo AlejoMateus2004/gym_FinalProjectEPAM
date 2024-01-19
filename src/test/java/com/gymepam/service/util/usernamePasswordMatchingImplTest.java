@@ -27,7 +27,7 @@ class usernamePasswordMatchingImplTest {
     private TrainerService trainerService;
 
     @Mock
-    private validatePassword validatePassword;
+    private ValidatePassword validatePassword;
 
     @InjectMocks
     private UsernamePasswordMatchingImpl usernamePasswordMatching;
