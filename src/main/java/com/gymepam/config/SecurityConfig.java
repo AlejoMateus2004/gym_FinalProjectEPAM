@@ -1,15 +1,10 @@
 package com.gymepam.config;
 
 
-import com.gymepam.service.util.validatePassword;
-import com.gymepam.service.util.validatePasswordBCryptImpl;
-import com.gymepam.service.util.validatePasswordImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -30,7 +25,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/**/login","/initStorageRealDb/**").permitAll()
+                .authorizeRequests().antMatchers("/**/login","/initStorageRealDb/**","/**/save").permitAll()
                 .antMatchers("/user/**")
                 .hasRole("TRAINEE")
                 .anyRequest()

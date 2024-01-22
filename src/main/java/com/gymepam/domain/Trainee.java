@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.ToString;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -22,12 +24,13 @@ public class Trainee implements Serializable {
 
     @OneToOne (cascade = CascadeType.ALL)
     @JoinColumn(name = "userId", nullable = false, unique = true)
+    @Valid
     private User user;
 
-    @Column(name = "dateOfBirth", nullable = false)
+    @Column(name = "dateOfBirth", nullable = true)
     private LocalDate dateOfBirth;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address", nullable = true)
     private String address;
 
     @ToString.Exclude

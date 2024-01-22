@@ -3,9 +3,9 @@ package com.gymepam.service;
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.Trainee;
 import com.gymepam.domain.User;
-import com.gymepam.service.util.encryptPassword;
-import com.gymepam.service.util.generateUserName;
-import com.gymepam.service.util.validatePassword;
+import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.GenerateUserName;
+import com.gymepam.service.util.ValidatePassword;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,11 +22,11 @@ public class TraineeService {
     @Autowired
     private TraineeRepo traineeRepository;
     @Autowired
-    private validatePassword valPassword;
+    private ValidatePassword valPassword;
     @Autowired
-    private encryptPassword encryptPass;
+    private EncryptPassword encryptPass;
     @Autowired
-    private generateUserName genUserName;
+    private GenerateUserName genUserName;
 
     public void setTraineeRepository(TraineeRepo traineeRepository) {
         this.traineeRepository = traineeRepository;
@@ -37,6 +37,7 @@ public class TraineeService {
             User usr = trainee.getUser();
             String username = genUserName.setUserName(usr);
             usr.setUserName(username);
+            usr.setIsActive(true);
             trainee.setUser(usr);
             Trainee temp = traineeRepository.findTraineeByUserUsername(username);
             if (temp == null) {

@@ -20,9 +20,9 @@ class generateUserNameImplTest {
     @Mock
     private UserService userService;
     @InjectMocks
-    private generateUserNameImpl genUserName;
+    private GenerateUserNameImpl genUserName;
     @InjectMocks
-    private generatePasswordImpl genPassword;
+    private GeneratePasswordImpl genPassword;
 
     User user;
     List<String> listUserNames;

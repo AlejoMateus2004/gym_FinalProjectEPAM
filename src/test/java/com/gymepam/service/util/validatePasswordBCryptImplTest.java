@@ -20,7 +20,7 @@ class validatePasswordBCryptImplTest {
     private PasswordEncoder passwordEncoder;
 
     @InjectMocks
-    private validatePasswordBCryptImpl validatePassword;
+    private ValidatePasswordBCryptImpl validatePassword;
     private User user;
 
     @BeforeEach

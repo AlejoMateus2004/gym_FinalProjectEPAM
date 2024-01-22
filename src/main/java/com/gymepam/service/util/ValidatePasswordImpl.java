@@ -4,7 +4,7 @@ import com.gymepam.domain.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class validatePasswordImpl implements validatePassword{
+public class ValidatePasswordImpl implements ValidatePassword {
     @Override
     public boolean validatePassword(User user, String oldPassword) {
         String userPassword = user.getPassword();

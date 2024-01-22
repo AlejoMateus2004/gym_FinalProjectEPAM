@@ -52,7 +52,7 @@ public class InitializeStorageService {
         this.userService = userService;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void initialize() {
         try (Workbook workbook = WorkbookFactory.create(new FileInputStream(excelFilePath))) {
             loadDataFromExcel(workbook);

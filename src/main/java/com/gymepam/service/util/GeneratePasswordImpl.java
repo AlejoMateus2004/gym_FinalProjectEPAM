@@ -3,8 +3,8 @@ package com.gymepam.service.util;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-@Service("Gen10Password")
-public class generatePasswordImpl implements generatePassword {
+@Service
+public class GeneratePasswordImpl implements GeneratePassword {
     private static final String ALLOWED_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#&()-_";
 
     @Override

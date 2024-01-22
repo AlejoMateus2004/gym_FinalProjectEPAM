@@ -17,7 +17,7 @@ public class UsernamePasswordMatchingImpl implements UsernamePasswordMatching {
     private static final Logger logger = LoggerFactory.getLogger(UsernamePasswordMatching.class);
 
     @Autowired
-    private validatePassword validatePass;
+    private ValidatePassword validatePass;
 
     @Autowired
     private TraineeService traineeService;

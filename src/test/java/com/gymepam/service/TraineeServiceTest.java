@@ -3,9 +3,9 @@ package com.gymepam.service;
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.Trainee;
 import com.gymepam.domain.User;
-import com.gymepam.service.util.encryptPassword;
-import com.gymepam.service.util.generateUserName;
-import com.gymepam.service.util.validatePassword;
+import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.GenerateUserName;
+import com.gymepam.service.util.ValidatePassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -31,11 +30,11 @@ class TraineeServiceTest {
     @Mock
     private TraineeRepo traineeRepository;
     @Mock
-    private validatePassword valPassword;
+    private ValidatePassword valPassword;
     @Mock
-    private encryptPassword encryptPass;
+    private EncryptPassword encryptPass;
     @Mock
-    private generateUserName genUserName;
+    private GenerateUserName genUserName;
     @InjectMocks
     private TraineeService traineeService;
     private Trainee trainee;

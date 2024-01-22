@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 class generatePasswordImplTest {
 
     @InjectMocks
-    private generatePasswordImpl genPassword;
+    private GeneratePasswordImpl genPassword;
 
     @Test
     void generatePassword() {

@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service("manualUserName")
-public class generateUserNameImpl implements generateUserName {
+public class GenerateUserNameImpl implements GenerateUserName {
 
-    private static final Logger logger = LoggerFactory.getLogger(generateUserNameImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(GenerateUserNameImpl.class);
     @Autowired
     private UserService userService;
     @Cacheable("usernameCounts")

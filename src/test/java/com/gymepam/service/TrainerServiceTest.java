@@ -1,13 +1,12 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainerRepo;
-import com.gymepam.domain.Trainee;
 import com.gymepam.domain.Trainer;
 import com.gymepam.domain.TrainingType;
 import com.gymepam.domain.User;
-import com.gymepam.service.util.encryptPassword;
-import com.gymepam.service.util.generateUserName;
-import com.gymepam.service.util.validatePassword;
+import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.GenerateUserName;
+import com.gymepam.service.util.ValidatePassword;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,11 +30,11 @@ class TrainerServiceTest {
     @Mock
     private TrainerRepo trainerRepository;
     @Mock
-    private validatePassword valPassword;
+    private ValidatePassword valPassword;
     @Mock
-    private encryptPassword encryptPass;
+    private EncryptPassword encryptPass;
     @Mock
-    private generateUserName genUserName;
+    private GenerateUserName genUserName;
     @InjectMocks
     private TrainerService trainerService;
     private Trainer trainer;

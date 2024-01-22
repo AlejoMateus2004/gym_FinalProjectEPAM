@@ -2,6 +2,6 @@ package com.gymepam.service.util;
 
 import com.gymepam.domain.User;
 
-public interface validatePassword {
+public interface ValidatePassword {
     boolean validatePassword(User user, String oldPassword);
 }

@@ -20,7 +20,7 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
   servlet:
     multipart:
       max-file-size: 20MB
@@ -31,4 +31,7 @@ spring:
   profiles:
     active: jpa
 
-validate.password: bcrypt
+validate:
+  password: bcrypt
+  encoded:
+    enabled: false

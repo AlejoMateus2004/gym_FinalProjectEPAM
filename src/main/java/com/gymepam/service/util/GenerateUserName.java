@@ -2,6 +2,6 @@ package com.gymepam.service.util;
 
 import com.gymepam.domain.User;
 
-public interface generateUserName {
+public interface GenerateUserName {
     String setUserName(User user);
 }

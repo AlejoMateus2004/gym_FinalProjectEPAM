@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class validatePasswordImplTest {
 
     @InjectMocks
-    private validatePasswordImpl validatePassword;
+    private ValidatePasswordImpl validatePassword;
 
     User user;
     @BeforeEach

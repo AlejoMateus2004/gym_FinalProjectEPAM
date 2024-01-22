@@ -1,6 +1,6 @@
 package com.gymepam.service.util;
 
-public interface generatePassword {
+public interface GeneratePassword {
     String generatePassword();
 
 }
