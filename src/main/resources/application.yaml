@@ -1,16 +1,5 @@
-server:
-  port: 8080
-
-# File path for storage initialization
-initializationStorageFile:
-  path: src/main/resources/static/InitialGymData.xlsx
-
-logging:
-  pattern:
-    dateformat: hh:mm
-
-# Mysql conexión
 spring:
+<<<<<<< HEAD
   datasource:
     url: jdbc:mysql://127.0.0.1:3306/gym_epam?zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrival=true
     username: root
@@ -21,17 +10,31 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: validate
+=======
+  profiles:
+    active: jpa
+#    active: inmemory, elastic
+  application:
+    name: gym-final-project
+>>>>>>> 372a4d6e880ef0641b75e14e9047812662c3f4e6
   servlet:
     multipart:
       max-file-size: 20MB
       max-request-size: 20MB
-  devtools:
-    livereload:
-      enabled: true
-  profiles:
-    active: jpa
 
+<<<<<<< HEAD
 validate:
   password: bcrypt
   encoded:
     enabled: false
+=======
+validate.password: bcrypt
+
+server:
+  port: 8080
+
+# File path for storage initialization
+initializationStorageFile:
+  path: src/main/resources/static/InitialGymData.xlsx
+
+>>>>>>> 372a4d6e880ef0641b75e14e9047812662c3f4e6

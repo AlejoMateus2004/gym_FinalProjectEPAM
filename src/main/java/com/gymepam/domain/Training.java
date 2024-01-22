@@ -35,6 +35,9 @@ public class Training implements Serializable {
     @Column(name = "trainingDate", nullable = false)
     private LocalDate trainingDate;
 
+//    @Column(name = "trainingDuration", nullable = false)
+//    private Number trainingDuration;
+
     @Column(name = "trainingDuration", nullable = false)
-    private Number trainingDuration;
+    private Long trainingDuration;
 }

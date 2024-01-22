@@ -61,7 +61,7 @@ class TrainingServiceTest {
         training.setTrainee(trainee);
         training.setTrainer(trainer);
         training.setTrainingDate(LocalDate.parse("2022-08-06"));
-        training.setTrainingDuration(3);
+        training.setTrainingDuration(3l);
         training.setTrainingName("Plan Three Months");
     }
 

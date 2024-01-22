@@ -33,13 +33,14 @@ public class TraineeService {
     }
     @Transactional
     public Trainee saveTrainee(Trainee trainee) {
+        Trainee temp = null;
         try{
             User usr = trainee.getUser();
             String username = genUserName.setUserName(usr);
             usr.setUserName(username);
             usr.setIsActive(true);
             trainee.setUser(usr);
-            Trainee temp = traineeRepository.findTraineeByUserUsername(username);
+            temp = traineeRepository.findTraineeByUserUsername(username);
             if (temp == null) {
                 User user = trainee.getUser();
                 String password = user.getPassword();
@@ -53,7 +54,7 @@ public class TraineeService {
             logger.error("Error, trying to save Trainee", e);
 
         }
-        return null;
+        return temp;
     }
     @PreAuthorize("hasRole('ROLE_TRAINEE')")
     @Transactional

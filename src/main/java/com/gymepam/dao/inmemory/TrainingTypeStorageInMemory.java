@@ -1,4 +1,4 @@
-package com.gymepam.dao.INMEMORY;
+package com.gymepam.dao.inmemory;
 
 import com.gymepam.dao.TrainingTypeRepo;
 import com.gymepam.domain.TrainingType;
@@ -6,7 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 
-@Repository
 public class TrainingTypeStorageInMemory implements TrainingTypeRepo {
 
     private static Map<Long, TrainingType> Training_TypeMap = new HashMap<>();

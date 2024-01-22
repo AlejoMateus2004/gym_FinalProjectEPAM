@@ -1,0 +1,5 @@
+database.elastic:
+  port: 9003
+  hostname: localhost
+  user: usuario
+  password: contrasena

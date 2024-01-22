@@ -1,12 +1,13 @@
 package com.gymepam.service.storage;
 
+import com.gymepam.config.AppProperties;
+import com.gymepam.config.ElasticSearchProperties;
 import com.gymepam.domain.*;
 import com.gymepam.service.*;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -16,49 +17,29 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@AllArgsConstructor
+@Log4j2
 public class InitializeStorageService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InitializeStorageService.class);
+    private static final Map<String, Map<Long, Long>> IDS_MAP = new HashMap<>();
 
-    private Map<String, Map<Long, Long>> idsMap = new HashMap<>();
+    @Autowired private final ElasticSearchProperties elasticSearchProperties;
+    @Autowired private final AppProperties appProperties;
 
-    @Value("${initializationStorageFile.path}")
-    private String excelFilePath;
-
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
-    private final StorageService storageService;
-    private final TraineeService traineeService;
-    private final TrainerService trainerService;
-    private final UserService userService;
-    private final TrainingService trainingService;
-    private final TrainingTypeService trainingTypeService;
-
-    @Autowired
-    public InitializeStorageService(
-            StorageService storageService,
-            TraineeService traineeService,
-            TrainerService trainerService,
-            TrainingService trainingService,
-            TrainingTypeService trainingTypeService,
-            UserService userService
-    ) {
-        this.storageService = storageService;
-        this.traineeService = traineeService;
-        this.trainerService = trainerService;
-        this.trainingService = trainingService;
-        this.trainingTypeService = trainingTypeService;
-        this.userService = userService;
-    }
+    @Autowired private final StorageService storageService;
+    @Autowired private final TraineeService traineeService;
+    @Autowired private final TrainerService trainerService;
+    @Autowired private final UserService userService;
+    @Autowired private final TrainingService trainingService;
+    @Autowired private final TrainingTypeService trainingTypeService;
 
 //    @PostConstruct
     public void initialize() {
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream(excelFilePath))) {
+        try (Workbook workbook = WorkbookFactory.create(new FileInputStream( appProperties.getExcelFilePath() ))) {
             loadDataFromExcel(workbook);
-            LOGGER.info("Data loaded from file");
+            log.info("Data loaded from file");
         } catch (Exception e) {
-            LOGGER.error("Error loading data from file", e);
+            log.error("Error loading data from file", e);
         }
     }
 
@@ -77,12 +58,12 @@ public class InitializeStorageService {
                 } else if ("Training".equals(sheetName)) {
                     processTrainingSheet(sheet);
                 } else {
-                    LOGGER.warn("Object unknown: {}", sheetName);
+                    log.warn("Object unknown: {}", sheetName);
                 }
             }
-            LOGGER.info("File has been uploaded successfully");
+            log.info("File has been uploaded successfully");
         } catch (Exception e) {
-            LOGGER.error("Error while File is uploaded", e);
+            log.error("Error while File is uploaded", e);
         }
     }
     // Process Trainee sheet
@@ -104,13 +85,13 @@ public class InitializeStorageService {
             if (trainee != null) {
                 Trainee result = traineeService.saveTrainee(trainee);
 
-                if (activeProfile.equals("inMemory")) {
+                if (appProperties.getActiveProfile().equals("inmemory")) {
                     userService.saveUser(result.getUser());
                 }
                 idMap.put(idFieldFileTrainee, result.getId());
             }
         }
-        idsMap.put("Trainee", idMap);
+        IDS_MAP.put("Trainee", idMap);
     }
 
     // Process Training_Type sheet
@@ -134,7 +115,7 @@ public class InitializeStorageService {
                 idMap.put(idFieldFileTrainingType, result.getId());
             }
         }
-        idsMap.put("TrainingType", idMap);
+        IDS_MAP.put("TrainingType", idMap);
     }
 
     // Process Trainer sheet
@@ -151,19 +132,19 @@ public class InitializeStorageService {
             }
             Long idFieldFileTrainer = (Long) trainerData.get("Id");
 
-            trainerData.put("trainingTypeId", idsMap.get("TrainingType").get(trainerData.get("trainingTypeId")));
+            trainerData.put("trainingTypeId", IDS_MAP.get("TrainingType").get(trainerData.get("trainingTypeId")));
 
 
             Trainer trainer = getDataTrainer(trainerData);
             if (trainer != null) {
                 Trainer result =trainerService.saveTrainer(trainer);
-                if (activeProfile.equals("inMemory")) {
+                if (appProperties.getActiveProfile().equals("inmemory")) {
                     userService.saveUser(result.getUser());
                 }
                 idMap.put(idFieldFileTrainer, result.getId());
             }
         }
-        idsMap.put("Trainer", idMap);
+        IDS_MAP.put("Trainer", idMap);
     }
 
     // Process Training sheet
@@ -177,9 +158,9 @@ public class InitializeStorageService {
             if (trainingData == null) {
                 continue;
             }
-            trainingData.put("TraineeId", idsMap.get("Trainee").get(trainingData.get("TraineeId")));
-            trainingData.put("TrainerId", idsMap.get("Trainer").get(trainingData.get("TrainerId")));
-            trainingData.put("trainingTypeId", idsMap.get("TrainingType").get(trainingData.get("trainingTypeId")));
+            trainingData.put("TraineeId", IDS_MAP.get("Trainee").get(trainingData.get("TraineeId")));
+            trainingData.put("TrainerId", IDS_MAP.get("Trainer").get(trainingData.get("TrainerId")));
+            trainingData.put("trainingTypeId", IDS_MAP.get("TrainingType").get(trainingData.get("trainingTypeId")));
 
             Training training = getDataTraining(trainingData);
             if (training != null) {
@@ -247,7 +228,7 @@ public class InitializeStorageService {
         training.setId((Long) trainingData.get("Id"));
         training.setTrainingDate((LocalDate) trainingData.get("trainingDate"));
         training.setTrainingName((String) trainingData.get("trainingName"));
-        training.setTrainingDuration((Number) trainingData.get("trainingDuration"));
+        training.setTrainingDuration( ((Number) trainingData.get("trainingDuration")).longValue() );
         training.setTrainee(traineeService.getTrainee((Long) trainingData.get("TraineeId")));
         training.setTrainer(trainerService.getTrainer((Long) trainingData.get("TrainerId")));
         training.setTrainingType(trainingTypeService.getTraining_Type((Long) trainingData.get("trainingTypeId")));

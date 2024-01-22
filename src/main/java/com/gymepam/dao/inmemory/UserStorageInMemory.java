@@ -1,14 +1,12 @@
-package com.gymepam.dao.INMEMORY;
+package com.gymepam.dao.inmemory;
 
 import com.gymepam.dao.UserRepo;
-import com.gymepam.domain.Trainer;
 import com.gymepam.domain.User;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Repository
 public class UserStorageInMemory implements UserRepo {
 
     private static Map<Long, User> UserMap = new HashMap<>();
