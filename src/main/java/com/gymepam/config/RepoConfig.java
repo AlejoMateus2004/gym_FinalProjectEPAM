@@ -1,7 +1,7 @@
 package com.gymepam.config;
 
 import com.gymepam.dao.*;
-import com.gymepam.dao.inmemory.*;
+import com.gymepam.dao.inMemory.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.*;
 
@@ -39,12 +39,11 @@ public class RepoConfig {
         return userRepository;
     }
 
-//    @Bean
-//    @Primary
-//    @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
-//    public TraineeRepo inMemoryTraineeRepoBean() {
-//        return new TraineeStorageInMemory();
-//    }
+    @Bean
+    @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
+    public TraineeRepo inMemoryTraineeRepoBean() {
+        return new TraineeStorageInMemory();
+    }
 
     @Bean
     @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")

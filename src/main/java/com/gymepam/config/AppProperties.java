@@ -16,4 +16,7 @@ public class AppProperties {
     @Value("${spring.profiles.active}")
     private String activeProfile;
 
+    @Value("${initializationStorageFile.active}")
+    private boolean initializeStorage;
+
 }

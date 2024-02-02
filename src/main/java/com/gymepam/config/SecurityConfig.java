@@ -6,12 +6,13 @@ import org.springframework.context.annotation.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-//@EnableWebSecurity
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -26,7 +27,14 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/**/login","/initStorageRealDb/**","/**/save").permitAll()
+                .authorizeRequests().antMatchers("/**/login","/initStorageRealDb/**","/**/save",
+                    "/v2/api-docs/**",
+                    "/configuration/ui/**",
+                    "/swagger-resources/**",
+                    "/configuration/**",
+                    "/swagger-ui/**",
+                    "/webjars/**")
+                .permitAll()
                 .antMatchers("/user/**")
                 .hasRole("TRAINEE")
                 .anyRequest()
