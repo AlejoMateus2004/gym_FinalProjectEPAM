@@ -1,23 +1,27 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainerRepo;
-import com.gymepam.domain.Trainer;
-import com.gymepam.domain.User;
+import com.gymepam.domain.dto.records.TrainerRecord;
+import com.gymepam.domain.entities.Trainer;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+@Slf4j
 @Service
 public class TrainerService {
-    private static final Logger logger = LoggerFactory.getLogger(TrainerService.class);
 
     @Autowired
     private TrainerRepo trainerRepository;
@@ -27,49 +31,52 @@ public class TrainerService {
     private EncryptPassword encryptPass;
     @Autowired
     private GenerateUserName genUserName;
+    @Autowired
+    private FormatDate formatDate;
 
-
-    public void setTrainerRepository(TrainerRepo trainerRepository) {
-        this.trainerRepository = trainerRepository;
-    }
     @Transactional
     public Trainer saveTrainer(Trainer trainer) {
+        Trainer temp = null;
         try{
             User usr = trainer.getUser();
             String username = genUserName.setUserName(usr);
             usr.setUserName(username);
             usr.setIsActive(true);
             trainer.setUser(usr);
-            Trainer temp = trainerRepository.findTrainerByUserUsername(username);
+            temp = trainerRepository.findTrainerByUserUsername(username);
             if (temp == null) {
                 User user = trainer.getUser();
                 String password = user.getPassword();
                 user.setPassword(encryptPass.encryptPassword(password));
                 trainer.setUser(user);
-                logger.info("Trainer saved");
+                log.info("Trainer saved");
                 return trainerRepository.save(trainer);
             }
         } catch (Exception e) {
-            logger.error("Error, trying to save Trainer", e);
+            log.error("Error, trying to save Trainer", e);
         }
-        return null;
+        return temp;
     }
     @PreAuthorize("hasRole('ROLE_TRAINER')")
     @Transactional
     public Trainer updateTrainer(Trainer trainer) {
         Trainer temp = trainerRepository.findTrainerByUserUsername(trainer.getUser().getUserName());
         if (temp == null) {
-            logger.warn("Trainer can not be updated, is not yet created");
+            log.warn("Trainer can not be updated, is not yet created");
             return null;
         }
+        User userUpdates = trainer.getUser();
+
         User user = temp.getUser();
-        String oldPassword = trainer.getUser().getPassword();
-        if((oldPassword.equals(user.getPassword()))){
-            logger.info("Trainee updated");
-            return trainerRepository.save(trainer);
-        }
-        logger.warn("Password is different from old password, trainer can not be updated");
-        return null;
+        user.setFirstName(userUpdates.getFirstName());
+        user.setLastName(userUpdates.getLastName());
+        user.setIsActive(userUpdates.getIsActive());
+        temp.setUser(user);
+        temp.setTrainingType(trainer.getTrainingType());
+
+
+        log.info("Trainer updated");
+        return trainerRepository.save(temp);
     }
     @Transactional(readOnly = true)
     public Trainer getTrainer(Long trainerId) {
@@ -90,16 +97,16 @@ public class TrainerService {
     public Trainer updatePassword(String username, String oldPassword, String newPassword){
         Trainer trainer = trainerRepository.findTrainerByUserUsername(username);
         if (trainer == null) {
-            logger.info("Trainer not found");
+            log.info("Trainer not found");
         }else{
             User user = trainer.getUser();
             if(valPassword.validatePassword(user, oldPassword)){
                 user.setPassword(encryptPass.encryptPassword(newPassword));
                 trainer.setUser(user);
-                logger.info("Password updated");
+                log.info("Password updated");
                 return trainerRepository.save(trainer);
             }
-            logger.warn("Password is different from old password, password can not be updated");
+            log.warn("Password is different from old password, password can not be updated");
         }
         return null;
     }
@@ -108,6 +115,24 @@ public class TrainerService {
     public List<Trainer> getTrainerByTraineeListEmpty(){
         return trainerRepository.findTrainersByUserIsActiveAndTraineeListIsEmpty();
     }
+
+    @PreAuthorize("hasRole('ROLE_TRAINER') or hasRole('ROLE_TRAINEE')")
+    @Transactional(readOnly = true)
+    public Set<Trainer> getActiveTrainersNotAssignedToTrainee(String username){
+        return trainerRepository.findActiveTrainersNotAssignedToTrainee(username);
+    }
+
+    @PreAuthorize("hasRole('ROLE_TRAINER')")
+    @Transactional(readOnly = true)
+    public Trainer getTrainerByUserUsernameWithTrainingParams(TrainerRecord.TrainerRequestWithTrainingParams trainerRequest) {
+        return trainerRepository.findTrainerByUserUsernameWithTrainingParams(
+                trainerRequest.trainer_username(),
+                trainerRequest.trainingRequest().periodFrom(),
+                trainerRequest.trainingRequest().periodTo(),
+                trainerRequest.trainingRequest().user_name()
+        );
+    }
+
 
 
 }

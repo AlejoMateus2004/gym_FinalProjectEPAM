@@ -1,23 +1,26 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TraineeRepo;
-import com.gymepam.domain.Trainee;
-import com.gymepam.domain.User;
+import com.gymepam.domain.dto.records.TraineeRecord;
+import com.gymepam.domain.entities.Trainee;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+
+@Slf4j
 @Service
 public class TraineeService {
-
-    private static final Logger logger = LoggerFactory.getLogger(TraineeService.class);
 
     @Autowired
     private TraineeRepo traineeRepository;
@@ -27,10 +30,9 @@ public class TraineeService {
     private EncryptPassword encryptPass;
     @Autowired
     private GenerateUserName genUserName;
+    @Autowired
+    private FormatDate formatDate;
 
-    public void setTraineeRepository(TraineeRepo traineeRepository) {
-        this.traineeRepository = traineeRepository;
-    }
     @Transactional
     public Trainee saveTrainee(Trainee trainee) {
         Trainee temp = null;
@@ -46,13 +48,12 @@ public class TraineeService {
                 String password = user.getPassword();
                 user.setPassword(encryptPass.encryptPassword(password));
                 trainee.setUser(user);
-                logger.info("Trainee saved");
+                log.info("Trainee saved");
                 return traineeRepository.save(trainee);
             }
 
         } catch (Exception e) {
-            logger.error("Error, trying to save Trainee", e);
-
+            log.error("Error, trying to save Trainee", e);
         }
         return temp;
     }
@@ -61,17 +62,21 @@ public class TraineeService {
     public Trainee updateTrainee(Trainee trainee) {
         Trainee temp = traineeRepository.findTraineeByUserUsername(trainee.getUser().getUserName());
         if (temp == null) {
-            logger.warn("Trainee can not be updated, is not yet created");
+            log.warn("Trainee can not be updated, is not yet created");
             return null;
         }
+        User userUpdates = trainee.getUser();
+
         User user = temp.getUser();
-        String oldPassword = trainee.getUser().getPassword();
-        if((oldPassword.equals(user.getPassword()))){
-            logger.info("Trainee updated");
-            return traineeRepository.save(trainee);
-        }
-        logger.warn("Password is different from old password, trainee can not be updated");
-        return null;
+        user.setFirstName(userUpdates.getFirstName());
+        user.setLastName(userUpdates.getLastName());
+        user.setIsActive(userUpdates.getIsActive());
+        temp.setUser(user);
+        temp.setAddress(trainee.getAddress());
+        temp.setDateOfBirth(trainee.getDateOfBirth());
+
+        log.info("Trainee updated");
+        return traineeRepository.save(temp);
     }
 
     @Transactional(readOnly = true)
@@ -94,6 +99,15 @@ public class TraineeService {
         return traineeRepository.findTraineeByUserUsername(username);
     }
     @PreAuthorize("hasRole('ROLE_TRAINEE')")
+    @Transactional(readOnly = true)
+    public Trainee getTraineeByUserUsernameWithTrainingParams(TraineeRecord.TraineeRequestWithTrainingParams traineeRequest) {
+        return traineeRepository.findTraineeByUserUsernameWithTrainingParams(
+                traineeRequest.trainee_username(), traineeRequest.trainingRequest().periodFrom(), traineeRequest.trainingRequest().periodTo(), traineeRequest.trainingRequest().user_name(), traineeRequest.trainingRequest().training_type()
+        );
+    }
+
+
+    @PreAuthorize("hasRole('ROLE_TRAINEE')")
     @Transactional
     public void deleteByUserUserName(String username){
         traineeRepository.deleteByUserUserName(username);
@@ -103,17 +117,19 @@ public class TraineeService {
     public Trainee updatePassword(String username, String oldPassword, String newPassword){
         Trainee trainee = traineeRepository.findTraineeByUserUsername(username);
         if (trainee == null) {
-            logger.info("Trainee not found");
+            log.info("Trainee not found");
         }else{
             User user = trainee.getUser();
             if(valPassword.validatePassword(user, oldPassword)){
                 user.setPassword(encryptPass.encryptPassword(newPassword));
                 trainee.setUser(user);
-                logger.info("Password updated");
+                log.info("Password updated");
                 return traineeRepository.save(trainee);
             }
-            logger.warn("Password is different from old password, password can not be updated");
+            log.warn("Password is different from old password, password can not be updated");
         }
         return null;
     }
+
+
 }

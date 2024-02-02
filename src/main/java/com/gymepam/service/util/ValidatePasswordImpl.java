@@ -1,6 +1,6 @@
 package com.gymepam.service.util;
 
-import com.gymepam.domain.User;
+import com.gymepam.domain.entities.User;
 import org.springframework.stereotype.Service;
 
 @Service

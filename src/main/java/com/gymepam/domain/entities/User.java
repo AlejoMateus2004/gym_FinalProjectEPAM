@@ -27,12 +27,10 @@ public class User implements Serializable {
     private String lastName;
 
     @Column(name = "userName", unique = true, nullable = false )
-    @NotBlank(message = "Username can't be null or empty")
     private String userName;
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
-    @NotBlank(message = "Password can't be null or empty")
     private String password;
 
     @Column(name = "isActive", nullable = false)

@@ -1,7 +1,7 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.UserRepo;
-import com.gymepam.domain.User;
+import com.gymepam.domain.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,9 +13,6 @@ public class UserService {
     @Autowired
     private UserRepo userRepository;
 
-    public void setuserRepository(UserRepo userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Transactional
     public User saveUser(User user){

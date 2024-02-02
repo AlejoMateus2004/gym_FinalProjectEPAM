@@ -1,8 +1,7 @@
 package com.gymepam.service.storage;
 
 import com.gymepam.config.AppProperties;
-import com.gymepam.config.ElasticSearchProperties;
-import com.gymepam.domain.*;
+import com.gymepam.domain.entities.*;
 import com.gymepam.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,24 +21,25 @@ import java.util.Map;
 public class InitializeStorageService {
 
     private static final Map<String, Map<Long, Long>> IDS_MAP = new HashMap<>();
-
-    @Autowired private final ElasticSearchProperties elasticSearchProperties;
     @Autowired private final AppProperties appProperties;
 
-    @Autowired private final StorageService storageService;
     @Autowired private final TraineeService traineeService;
     @Autowired private final TrainerService trainerService;
     @Autowired private final UserService userService;
     @Autowired private final TrainingService trainingService;
     @Autowired private final TrainingTypeService trainingTypeService;
 
-//    @PostConstruct
+    @PostConstruct
     public void initialize() {
-        try (Workbook workbook = WorkbookFactory.create(new FileInputStream( appProperties.getExcelFilePath() ))) {
-            loadDataFromExcel(workbook);
-            log.info("Data loaded from file");
-        } catch (Exception e) {
-            log.error("Error loading data from file", e);
+        if (appProperties.isInitializeStorage()) {
+            try (Workbook workbook = WorkbookFactory.create(new FileInputStream(appProperties.getExcelFilePath()))) {
+                loadDataFromExcel(workbook);
+                log.info("Data loaded from file");
+            } catch (Exception e) {
+                log.error("Error loading data from file", e);
+            }
+        } else {
+            log.info("Storage initialization skipped based on configuration.");
         }
     }
 
@@ -88,7 +88,7 @@ public class InitializeStorageService {
                 if (appProperties.getActiveProfile().equals("inmemory")) {
                     userService.saveUser(result.getUser());
                 }
-                idMap.put(idFieldFileTrainee, result.getId());
+                idMap.put(idFieldFileTrainee, result.getTraineeId());
             }
         }
         IDS_MAP.put("Trainee", idMap);
@@ -141,7 +141,7 @@ public class InitializeStorageService {
                 if (appProperties.getActiveProfile().equals("inmemory")) {
                     userService.saveUser(result.getUser());
                 }
-                idMap.put(idFieldFileTrainer, result.getId());
+                idMap.put(idFieldFileTrainer, result.getTrainerId());
             }
         }
         IDS_MAP.put("Trainer", idMap);
@@ -201,7 +201,7 @@ public class InitializeStorageService {
 
     private Trainee getDataTrainee(Map<String, Object> traineeData) {
         Trainee trainee = new Trainee();
-        trainee.setId((Long) traineeData.get("Id"));
+        trainee.setTraineeId((Long) traineeData.get("Id"));
         trainee.setAddress((String) traineeData.get("address"));
         trainee.setDateOfBirth((LocalDate) traineeData.get("dateOfBirth"));
         trainee.setUser(getUser(traineeData));
@@ -210,7 +210,7 @@ public class InitializeStorageService {
 
     private Trainer getDataTrainer(Map<String, Object> trainerData) {
         Trainer trainer = new Trainer();
-        trainer.setId((Long) trainerData.get("Id"));
+        trainer.setTrainerId((Long) trainerData.get("Id"));
         trainer.setTrainingType(trainingTypeService.getTraining_Type((Long) trainerData.get("trainingTypeId")));
         trainer.setUser(getUser(trainerData));
         return (trainer.getUser() != null) ? trainer : null;

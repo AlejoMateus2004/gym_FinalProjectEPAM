@@ -1,6 +1,6 @@
 package com.gymepam.service.util;
 
-import com.gymepam.domain.User;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class GenerateUserNameImpl implements GenerateUserName {
         try{
             Map<String, Integer> usernameCounts = getUsernameCounts();
 
-            String baseUsername = (firstName + "." + lastName).toLowerCase();
+            String baseUsername = (firstName + "." + lastName).toLowerCase().replace(" ","").trim();
             String username = baseUsername;
 
             if (usernameCounts != null) {

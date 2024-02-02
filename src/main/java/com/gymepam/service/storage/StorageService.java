@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-//@PreAuthorize("hasRole('ROLE_TRAINER')")
 public class StorageService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StorageService.class);
