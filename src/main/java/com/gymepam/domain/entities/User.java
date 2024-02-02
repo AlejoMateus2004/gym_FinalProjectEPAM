@@ -1,4 +1,4 @@
-package com.gymepam.domain;
+package com.gymepam.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,17 +19,14 @@ public class User implements Serializable {
     private Long Id;
 
     @Column(name = "firstName", nullable = false)
-    @NotBlank(message = "Firstname can't be null or empty")
     private String firstName;
 
     @Column(name = "lastName", nullable = false)
-    @NotBlank(message = "Lastname can't be null or empty")
     private String lastName;
 
     @Column(name = "userName", unique = true, nullable = false )
     private String userName;
 
-//    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(name = "password", nullable = false)
     private String password;
 

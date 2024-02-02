@@ -1,4 +1,4 @@
-package com.gymepam.domain;
+package com.gymepam.domain.entities;
 
 import lombok.Data;
 

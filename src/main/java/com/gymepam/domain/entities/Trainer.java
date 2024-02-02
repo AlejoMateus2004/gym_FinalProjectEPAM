@@ -1,4 +1,4 @@
-package com.gymepam.domain;
+package com.gymepam.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
@@ -26,7 +26,7 @@ public class Trainer implements Serializable {
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "specializationId", nullable = false)
+    @JoinColumn(name = "specializationId")
     private TrainingType trainingType;
 
     @ToString.Exclude
