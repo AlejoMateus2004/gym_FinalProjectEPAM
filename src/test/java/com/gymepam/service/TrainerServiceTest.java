@@ -1,10 +1,15 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainerRepo;
-import com.gymepam.domain.Trainer;
-import com.gymepam.domain.TrainingType;
-import com.gymepam.domain.User;
+import com.gymepam.domain.dto.records.TraineeRecord;
+import com.gymepam.domain.dto.records.TrainerRecord;
+import com.gymepam.domain.dto.records.TrainingRecord;
+import com.gymepam.domain.entities.Trainee;
+import com.gymepam.domain.entities.Trainer;
+import com.gymepam.domain.entities.TrainingType;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,10 +20,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,6 +34,8 @@ class TrainerServiceTest {
     private TrainerRepo trainerRepository;
     @Mock
     private ValidatePassword valPassword;
+    @Mock
+    private FormatDate formatDate;
     @Mock
     private EncryptPassword encryptPass;
     @Mock
@@ -51,11 +56,11 @@ class TrainerServiceTest {
         trainer.setUser(user);
 
         TrainingType trainingType = new TrainingType();
-        trainingType.setId(new Long(1));
+        trainingType.setId(1L);
         trainingType.setTrainingTypeName("Weight Lifting");
 
         trainer.setTrainingType(trainingType);
-        trainer.setTraineeList(new ArrayList<>());
+        trainer.setTraineeList(new HashSet<>());
     }
 
 
@@ -80,7 +85,7 @@ class TrainerServiceTest {
         Trainer updatedTrainer = trainer;
 
         TrainingType trainingType = new TrainingType();
-        trainingType.setId(new Long(2));
+        trainingType.setId(2L);
         trainingType.setTrainingTypeName("Cardio");
         updatedTrainer.setTrainingType(trainingType);
 
@@ -96,10 +101,10 @@ class TrainerServiceTest {
     @DisplayName("Test get Trainer")
     @Test
     void getTrainer() {
-        when(trainerRepository.findById(trainer.getId())).thenReturn(Optional.ofNullable(trainer));
-        Trainer expectedValue = trainerService.getTrainer(trainer.getId());
+        when(trainerRepository.findById(trainer.getTrainerId())).thenReturn(Optional.ofNullable(trainer));
+        Trainer expectedValue = trainerService.getTrainer(trainer.getTrainerId());
         assertNotNull(expectedValue);
-        assertEquals(trainer.getId(), expectedValue.getId());
+        assertEquals(trainer.getTrainerId(), expectedValue.getTrainerId());
     }
 
     @DisplayName("Test get all Trainers")
@@ -119,7 +124,7 @@ class TrainerServiceTest {
         when(trainerRepository.findTrainerByUserUsername(userName)).thenReturn(trainer);
         Trainer expectedValue = trainerService.getTrainerByUserUsername(userName);
         assertNotNull(expectedValue);
-        assertEquals(trainer.getId(), expectedValue.getId());
+        assertEquals(trainer.getTrainerId(), expectedValue.getTrainerId());
     }
 
     @DisplayName("Test update password with correct data")
@@ -178,4 +183,36 @@ class TrainerServiceTest {
         assertThat(trainers.size()).isEqualTo(1);
         assertThat(trainers.get(0).getTraineeList()).isEmpty();
     }
+
+//    @DisplayName("Test get Trainer by username and/or training params")
+//    @Test
+//    void getTrainerByUserUsernameWithTrainingParams() {
+//        TrainingRecord.TrainingFilterRequest trainingRequest = new TrainingRecord.
+//                TrainingFilterRequest(LocalDate.parse("2022-01-01"),LocalDate.parse("2022-02-01"), "trainerName", "trainingTypeName");
+//
+//        TrainerRecord.TrainerRequestWithTrainingParams trainerRequest = new TrainerRecord.
+//                TrainerRequestWithTrainingParams("alejandro.mateus", trainingRequest);
+//
+//
+//
+//        when(formatDate.getLocalDate("2022-01-01")).thenReturn(LocalDate.parse("2022-01-01"));
+//        when(formatDate.getLocalDate("2022-02-01")).thenReturn(LocalDate.parse("2022-02-01"));
+//
+//        when(trainerRepository.findTrainerByUserUsernameWithTrainingParams(
+//                "alejandro.mateus",
+//                LocalDate.of(2022, 1, 1),
+//                LocalDate.of(2022, 2, 1),
+//                "trainerName"
+//        )).thenReturn(trainer);
+//
+//        Trainer resultTrainer = trainerService.getTrainerByUserUsernameWithTrainingParams(trainerRequest);
+//
+//        assertEquals(trainer, resultTrainer);
+//        verify(trainerRepository, times(1)).findTrainerByUserUsernameWithTrainingParams(
+//                "alejandro.mateus",
+//                LocalDate.of(2022, 1, 1),
+//                LocalDate.of(2022, 2, 1),
+//                "trainerName"
+//        );
+//    }
 }

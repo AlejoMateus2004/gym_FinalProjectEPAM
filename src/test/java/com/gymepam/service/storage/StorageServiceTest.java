@@ -1,6 +1,6 @@
 package com.gymepam.service.storage;
 
-import com.gymepam.domain.*;
+import com.gymepam.domain.entities.*;
 import com.gymepam.service.TraineeService;
 import com.gymepam.service.TrainerService;
 import com.gymepam.service.TrainingService;

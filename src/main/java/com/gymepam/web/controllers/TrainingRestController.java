@@ -1,51 +1,34 @@
 package com.gymepam.web.controllers;
 
-import com.gymepam.dao.TrainingRepo;
-import com.gymepam.domain.Training;
-import com.gymepam.service.TrainingService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
+import com.gymepam.domain.dto.records.TrainingRecord;
+import com.gymepam.service.facade.TrainingFacadeService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import javax.validation.Valid;
 
+@Api(tags = "Training Controller", value = "Operations for creating Trainings in the application")
+@AllArgsConstructor
 @RestController
 @RequestMapping("/training")
 public class TrainingRestController {
 
-    TrainingService trainingService;
+    TrainingFacadeService trainingFacade;
 
-    @Autowired
-    public TrainingRestController(TrainingService trainingService) {
-        this.trainingService = trainingService;
-    }
-
+    @ApiOperation(value = "Save Training", notes = "Register a new Training in the system")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @PostMapping
-    public ResponseEntity<Training> saveTraining(@RequestBody Training training){
-        Training newTraining = trainingService.saveTraining(training);
-        return new ResponseEntity<>(newTraining,HttpStatus.CREATED);
+    public ResponseEntity saveTraining(@RequestBody @Valid TrainingRecord.TrainingRequest trainingRequest){
+        return trainingFacade.saveTraining_(trainingRequest);
     }
 
-    @GetMapping("/TraineeTrainingsList/{username}")
-    public ResponseEntity<List<Training>> getTraineeTrainingsList(@PathVariable String username){
-        return new ResponseEntity<>(trainingService.getAllTrainingsByTrainee(username), HttpStatus.OK);
-    }
-
-    @GetMapping("/TrainerTrainingsList/{username}")
-    public ResponseEntity<List<Training>> getTrainerTrainingsList(@PathVariable String username){
-        return new ResponseEntity<>(trainingService.getAllTrainingsByTrainer(username), HttpStatus.OK);
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Training>> getAllTrainings(){
-        return new ResponseEntity<>(trainingService.getAllTrainings(), HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Training> getTraining(@PathVariable Long id){
-        return new ResponseEntity<>(trainingService.getTraining(id), HttpStatus.OK);
-    }
 
 }

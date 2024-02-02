@@ -1,9 +1,12 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TraineeRepo;
-import com.gymepam.domain.Trainee;
-import com.gymepam.domain.User;
+import com.gymepam.domain.dto.records.TraineeRecord;
+import com.gymepam.domain.dto.records.TrainingRecord;
+import com.gymepam.domain.entities.Trainee;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,9 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,6 +35,8 @@ class TraineeServiceTest {
     @Mock
     private EncryptPassword encryptPass;
     @Mock
+    private FormatDate formatDate;
+    @Mock
     private GenerateUserName genUserName;
     @InjectMocks
     private TraineeService traineeService;
@@ -42,7 +45,7 @@ class TraineeServiceTest {
     @BeforeEach
     void setUp() {
         trainee = new Trainee();
-        trainee.setId(14L);
+        trainee.setTraineeId(14L);
         User user = new User();
         user.setFirstName("Alejandro");
         user.setLastName("Mateus");
@@ -52,6 +55,7 @@ class TraineeServiceTest {
         trainee.setUser(user);
         trainee.setDateOfBirth(LocalDate.now());
         trainee.setAddress("Cra 13 #1-33");
+        trainee.setTrainerList(new HashSet<>());
     }
 
     @DisplayName("Test save Trainee")
@@ -72,10 +76,10 @@ class TraineeServiceTest {
     @DisplayName("Test get Trainee")
     @Test
     void testGetTrainee() {
-        when(traineeRepository.findById(trainee.getId())).thenReturn(Optional.ofNullable(trainee));
-        Trainee expectedValue = traineeService.getTrainee(trainee.getId());
+        when(traineeRepository.findById(trainee.getTraineeId())).thenReturn(Optional.ofNullable(trainee));
+        Trainee expectedValue = traineeService.getTrainee(trainee.getTraineeId());
         assertNotNull(expectedValue);
-        assertEquals(trainee.getId(), expectedValue.getId());
+        assertEquals(trainee.getTraineeId(), expectedValue.getTraineeId());
     }
 
     @DisplayName("Test get all Trainees")
@@ -93,7 +97,7 @@ class TraineeServiceTest {
         willDoNothing().given(traineeRepository).delete(trainee);
         traineeService.deleteTrainee(trainee);
         verify(traineeRepository,times(1)).delete(trainee);
-        assertNull(traineeService.getTrainee(trainee.getId()));
+        assertNull(traineeService.getTrainee(trainee.getTraineeId()));
     }
     @DisplayName("Test get Trainee by UserName")
     @Test
@@ -102,7 +106,7 @@ class TraineeServiceTest {
         when(traineeRepository.findTraineeByUserUsername(userName)).thenReturn(trainee);
         Trainee expectedValue = traineeService.getTraineeByUserUsername(userName);
         assertNotNull(expectedValue);
-        assertEquals(trainee.getId(), expectedValue.getId());
+        assertEquals(trainee.getTraineeId(), expectedValue.getTraineeId());
     }
     @DisplayName("Test delete Trainee by UserName")
     @Test
@@ -111,7 +115,7 @@ class TraineeServiceTest {
         willDoNothing().given(traineeRepository).deleteByUserUserName(userName);
         traineeService.deleteByUserUserName(userName);
         verify(traineeRepository,times(1)).deleteByUserUserName(userName);
-        assertNull(traineeService.getTrainee(trainee.getId()));
+        assertNull(traineeService.getTrainee(trainee.getTraineeId()));
     }
     @DisplayName("Test update password with correct data")
     @Test
@@ -172,4 +176,38 @@ class TraineeServiceTest {
         assertEquals("CRA 20", result.getAddress());
         verify(traineeRepository, times(1)).save(updatedTrainee);
     }
+
+//    @DisplayName("Test get Trainee by username and/or training params")
+//    @Test
+//    void getTraineeByUserUsernameWithTrainingParams() {
+//        TrainingRecord.TrainingFilterRequest trainingRequest = new TrainingRecord.
+//                TrainingFilterRequest(LocalDate.parse("2022-01-01"),LocalDate.parse("2022-02-01"), "trainerName", "trainingTypeName");
+//
+//        TraineeRecord.TraineeRequestWithTrainingParams traineeRequest = new TraineeRecord.
+//                TraineeRequestWithTrainingParams("alejandro.mateus", trainingRequest);
+//
+//
+//
+//        when(formatDate.getLocalDate("2022-01-01")).thenReturn(LocalDate.parse("2022-01-01"));
+//        when(formatDate.getLocalDate("2022-02-01")).thenReturn(LocalDate.parse("2022-02-01"));
+//
+//        when(traineeRepository.findTraineeByUserUsernameWithTrainingParams(
+//                "alejandro.mateus",
+//                LocalDate.of(2022, 1, 1),
+//                LocalDate.of(2022, 2, 1),
+//                "trainerName",
+//                "trainingTypeName"
+//        )).thenReturn(trainee);
+//
+//        Trainee resultTrainee = traineeService.getTraineeByUserUsernameWithTrainingParams(traineeRequest);
+//
+//        assertEquals(trainee, resultTrainee);
+//        verify(traineeRepository, times(1)).findTraineeByUserUsernameWithTrainingParams(
+//                "alejandro.mateus",
+//                LocalDate.of(2022, 1, 1),
+//                LocalDate.of(2022, 2, 1),
+//                "trainerName",
+//                "trainingTypeName"
+//        );
+//    }
 }

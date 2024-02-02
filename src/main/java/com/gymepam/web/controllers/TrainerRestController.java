@@ -1,61 +1,91 @@
 package com.gymepam.web.controllers;
 
 import com.gymepam.domain.Login.AuthenticationRequest;
-import com.gymepam.domain.Trainer;
-import com.gymepam.service.TrainerService;
+import com.gymepam.domain.dto.records.TraineeRecord;
+import com.gymepam.domain.dto.records.TrainerRecord;
+import com.gymepam.domain.dto.records.TrainerRecord.TrainerResponseWithTrainees;
+import com.gymepam.domain.dto.records.TrainingRecord;
+import com.gymepam.domain.entities.Trainer;
 import com.gymepam.service.facade.TrainerFacadeService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
 
+@Api(tags = "Trainer Controller", value = "Operations for creating, updating, and retrieving Trainers information in the application")
+@AllArgsConstructor
 @RestController
 @RequestMapping("/trainer")
 public class TrainerRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrainerRestController.class);
 
     TrainerFacadeService trainerFacade;
-    TrainerService trainerService;
-
-
-    @Autowired
-    public TrainerRestController(TrainerService trainerService, TrainerFacadeService trainerFacade) {
-        this.trainerService = trainerService;
-        this.trainerFacade = trainerFacade;
+    @ApiOperation(value = "Save Trainer", notes = "Register a new Trainer in the system")
+    @PostMapping("/save")
+    public ResponseEntity<AuthenticationRequest> saveTrainer(@RequestBody @Valid TrainerRecord.TrainerRequest trainer){
+        return trainerFacade.save_Trainer(trainer);
     }
-
-    @PostMapping
-    public ResponseEntity<AuthenticationRequest> saveTrainer(@RequestBody @Valid Trainer trainer, Errors errors){
-        if (errors.hasErrors()) {
-            logger.error("Validation Error " + errors.getFieldError().getDefaultMessage());
-            return ResponseEntity.badRequest().body(null);
+    @ApiOperation(value = "Update Trainer", notes = "Update an existing Trainer")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @PutMapping("/update")
+    public ResponseEntity<TrainerResponseWithTrainees> updateTrainer(@RequestBody @Valid TrainerRecord.TrainerUpdateRequest trainerRequest){
+        TrainerResponseWithTrainees trainerResponse = trainerFacade.updateTrainer_(trainerRequest);
+        if (trainerResponse == null) {
+            return ResponseEntity.badRequest().build();
         }
-
-        AuthenticationRequest newAuth = trainerFacade.saveTrainer(trainer);
-        return new ResponseEntity<>(newAuth,HttpStatus.CREATED);
+        return new ResponseEntity<>(trainerResponse,HttpStatus.ACCEPTED);
     }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<Trainer>> getAllTrainers(){
-        return new ResponseEntity<>(trainerService.getAllTrainers(), HttpStatus.OK);
-    }
-
+    @ApiOperation(value = "Get Trainer", notes = "Retrieve an existing Trainer")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @GetMapping("/{username}")
-    public ResponseEntity<Trainer> getTrainer(@PathVariable String username){
-        return new ResponseEntity<>(trainerService.getTrainerByUserUsername(username), HttpStatus.OK);
+    public ResponseEntity<TrainerRecord.TrainerResponseWithTrainees> getTrainer(@PathVariable String username){
+        TrainerRecord.TrainerResponseWithTrainees trainerResponse = trainerFacade.getTrainerByUserUsername_(username);
+        if (trainerResponse == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return new ResponseEntity<>(trainerResponse, HttpStatus.OK);
+    }
+    @ApiOperation(value = "Get Trainer Trainings List", notes = "Retrieve Trainer's Training List")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @GetMapping("/trainings")
+    public ResponseEntity<List<TrainingRecord.TrainerTrainingResponse>> getTrainerByTrainingParams(
+            @RequestParam(name = "trainerUsername", required = true) String trainerUsername,
+            @RequestParam(name = "periodFrom", required = false) LocalDate periodFrom,
+            @RequestParam(name = "periodTo", required = false) LocalDate periodTo,
+            @RequestParam(name = "traineeName", required = false) String traineeName) {
+
+        TrainerRecord.TrainerRequestWithTrainingParams trainerRequest =
+                new TrainerRecord.TrainerRequestWithTrainingParams(trainerUsername, new TrainingRecord.TrainingFilterRequest(periodFrom, periodTo, traineeName, null));
+        List<TrainingRecord.TrainerTrainingResponse> trainingsResponse = trainerFacade.getTrainerByUserUsernameWithTrainingParams_(trainerRequest);
+        if (trainingsResponse == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        return new ResponseEntity<>(trainingsResponse, HttpStatus.OK);
     }
 
+    @ApiOperation(value = "All Trainers Not Assigned To Active Trainee", notes = "Get All Trainers Not Assigned To Active Trainee List")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @GetMapping("/allNotAssigned")
     public ResponseEntity<List<Trainer>> getAllTrainersNotAssignedToActiveTraineeList(){
-        return new ResponseEntity<>(trainerService.getTrainerByTraineeListEmpty(), HttpStatus.OK);
+        return new ResponseEntity<>(trainerFacade.getTrainerByTraineeListEmpty(), HttpStatus.OK);
+    }
+    @ApiOperation(value = "Update Trainer Status", notes = "Activate/De-Activate Trainer")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @PatchMapping
+    public ResponseEntity updateStatus(@RequestParam String username, @RequestParam boolean isActive){
+        return trainerFacade.updateStatus(username, isActive);
     }
 
 

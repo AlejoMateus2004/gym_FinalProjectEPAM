@@ -1,7 +1,8 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainingRepo;
-import com.gymepam.domain.*;
+import com.gymepam.domain.entities.*;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,14 +10,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 class TrainingServiceTest {
 
@@ -73,6 +76,18 @@ class TrainingServiceTest {
         Training expectedValue = trainingService.saveTraining(training);
         assertNotNull(expectedValue);
         assertEquals(training, expectedValue);
+    }
+    @DisplayName("Test that throw an exception and the result is null while saving the Training")
+    @Test
+    void saveTraining_ExceptionThrown_LogsErrorAndReturnsNull() {
+        Training training = new Training();
+
+        doThrow(new RuntimeException("Error while saving in the data base")).when(trainingRepository).save(training);
+
+        Training resultTraining = trainingService.saveTraining(training);
+
+        assertNull(resultTraining);
+
     }
     @DisplayName("Test get Training")
     @Test

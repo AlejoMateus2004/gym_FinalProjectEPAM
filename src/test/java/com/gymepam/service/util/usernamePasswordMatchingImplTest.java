@@ -1,8 +1,8 @@
 package com.gymepam.service.util;
 
 import com.gymepam.domain.Roles;
-import com.gymepam.domain.Trainee;
-import com.gymepam.domain.User;
+import com.gymepam.domain.entities.Trainee;
+import com.gymepam.domain.entities.User;
 import com.gymepam.service.TraineeService;
 import com.gymepam.service.TrainerService;
 import org.junit.jupiter.api.BeforeEach;

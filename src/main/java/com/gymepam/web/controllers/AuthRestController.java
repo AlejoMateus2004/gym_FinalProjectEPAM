@@ -1,53 +1,39 @@
 package com.gymepam.web.controllers;
 
-import com.gymepam.config.JwtUtil;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.Login.AuthenticationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import com.gymepam.service.facade.LoginFacadeService;
+import com.gymepam.service.facade.LoginFacadeService.ChangeLoginRequest;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiOperation;
+import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+@Api(tags = "Authentication Controller", value = "Operations for login, and change user password in the application")
+@AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
 public class AuthRestController {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthRestController.class);
+    LoginFacadeService loginFacadeService;
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private JwtUtil jwtUtil;
-
+    @ApiOperation(value = "Login", notes = "Log in to the systems")
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
-        try {
-            UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-            authenticationManager.authenticate(login);
-
-            String userName = authenticationRequest.getUsername();
-
-            String jwt = jwtUtil.create(userName);
-
-            AuthenticationResponse response = new AuthenticationResponse();
-            response.setUsername(userName);
-            response.setJwt(jwt);
-            response.setRole(login.getAuthorities().toString());
-
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        return loginFacadeService.getAuthenticationResponse(authenticationRequest);
 
     }
+
+    @ApiOperation(value = "Change Login", notes = "Change password")
+    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
+            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @PutMapping("/login")
+    public ResponseEntity changeLogin(@RequestBody @Valid ChangeLoginRequest authenticationRequest) {
+        return loginFacadeService.changeAuthentication(authenticationRequest);
+    }
+
 }
