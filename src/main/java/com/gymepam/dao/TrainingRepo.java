@@ -1,6 +1,6 @@
 package com.gymepam.dao;
 
-import com.gymepam.domain.Training;
+import com.gymepam.domain.entities.Training;
 
 import java.util.List;
 import java.util.Optional;

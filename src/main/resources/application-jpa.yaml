@@ -3,7 +3,7 @@ app.repository: jpa
 
 spring:
   datasource:
-    url: jdbc:mysql://127.0.0.1:3306/gym_epam?zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrival=true
+    url: jdbc:mysql://127.0.0.1:3306/gym_epam2?zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&useTimezone=true&serverTimezone=UTC&allowPublicKeyRetrival=true
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,4 +12,4 @@ spring:
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate

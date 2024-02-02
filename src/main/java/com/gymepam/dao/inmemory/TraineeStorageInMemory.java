@@ -1,14 +1,12 @@
-package com.gymepam.dao.inmemory;
+package com.gymepam.dao.inMemory;
 
 import com.gymepam.dao.TraineeRepo;
-import com.gymepam.domain.Trainee;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Repository;
+import com.gymepam.domain.entities.Trainee;
 
+import java.time.LocalDate;
 import java.util.*;
 
-@Repository
-@ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
+
 public class TraineeStorageInMemory implements TraineeRepo {
 
     private static Map<Long, Trainee> traineeMap = new HashMap<>();
@@ -18,9 +16,8 @@ public class TraineeStorageInMemory implements TraineeRepo {
         if (value == null) {
             return null;
         }
-        traineeMap.put(value.getId(), value);
-        return traineeMap.get(value.getId());
-    }
+        traineeMap.put(value.getTraineeId(), value);
+        return traineeMap.get(value.getTraineeId()); }
 
     @Override
     public Optional<Trainee> findById(Long value) {
@@ -29,7 +26,7 @@ public class TraineeStorageInMemory implements TraineeRepo {
 
     @Override
     public void delete(Trainee value) {
-        traineeMap.remove(value.getId());
+        traineeMap.remove(value.getTraineeId());
     }
 
     @Override
@@ -51,6 +48,25 @@ public class TraineeStorageInMemory implements TraineeRepo {
         Trainee trainee = traineeList.stream()
                 .filter(t -> t.getUser().getUserName().equals(username))
                 .findFirst().orElse(null);
-        traineeMap.remove(trainee.getId());
+        traineeMap.remove(trainee.getTraineeId());
     }
+
+    @Override
+    public Trainee findTraineeByUserUsernameWithTrainingParams(String userName, LocalDate periodFrom, LocalDate periodTo, String trainerName, String trainingType) {
+        List<Trainee> traineeList = new ArrayList<>(traineeMap.values());
+        Trainee trainee = traineeList.stream()
+                .filter(t -> t.getUser().getUserName().equals(userName) &&
+                        t.getTrainingList().stream()
+                                .anyMatch(tr -> (periodFrom == null || tr.getTrainingDate().isAfter(periodFrom)) &&
+                                        (periodTo == null || tr.getTrainingDate().isBefore(periodTo)) &&
+                                        (trainerName == null || tr.getTrainer().getUser().getFirstName().toLowerCase().contains(trainerName.toLowerCase())) &&
+                                        (trainingType == null || tr.getTrainingType().getTrainingTypeName().toLowerCase().contains(trainingType.toLowerCase())))
+                )
+                .findFirst()
+                .orElse(null);
+
+        return trainee;
+    }
+
+
 }

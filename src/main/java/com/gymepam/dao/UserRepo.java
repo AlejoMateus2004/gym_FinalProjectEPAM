@@ -1,6 +1,6 @@
 package com.gymepam.dao;
 
-import com.gymepam.domain.User;
+import com.gymepam.domain.entities.User;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,7 @@
-package com.gymepam.dao.inmemory;
+package com.gymepam.dao.inMemory;
 
 import com.gymepam.dao.TrainingRepo;
-import com.gymepam.domain.Training;
-import org.springframework.stereotype.Repository;
+import com.gymepam.domain.entities.Training;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
 package com.gymepam.dao;
 
-import com.gymepam.domain.Training;
+import com.gymepam.domain.entities.Training;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

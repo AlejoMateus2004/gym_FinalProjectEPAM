@@ -1,7 +1,8 @@
 package com.gymepam.dao;
 
-import com.gymepam.domain.Trainee;
+import com.gymepam.domain.entities.Trainee;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,5 +13,12 @@ public interface TraineeRepo {
     List<Trainee> findAll();
     Trainee findTraineeByUserUsername(String username);
     void deleteByUserUserName(String username);
+    Trainee findTraineeByUserUsernameWithTrainingParams(String userName,
+                                                        LocalDate periodFrom,
+                                                        LocalDate periodTo,
+                                                        String trainerName,
+                                                        String trainingType);
+
+
 
 }
