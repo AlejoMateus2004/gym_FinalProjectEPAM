@@ -26,11 +26,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(SpringExtension.class)
 class TraineeRestControllerTest {
 
@@ -78,7 +81,7 @@ class TraineeRestControllerTest {
                                 true,
                                 "alejandro.mateus")
                         , LocalDate.parse("2024-02-02")
-                        , "Cra 13 # 1-33"
+                        , "Cra 13 #1-33"
                         , new HashSet<>()
                 ));
 
@@ -99,7 +102,7 @@ class TraineeRestControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.address").value("Cra 13 #1-33"))
-                .andExpect(jsonPath("$.user.username").value("alejandro.mateus"));
+                .andExpect(jsonPath("$.user.userName").value("alejandro.mateus"));
     }
 
     @Test
@@ -111,19 +114,19 @@ class TraineeRestControllerTest {
                         true,
                         "alejandro.mateus")
                 , LocalDate.parse("2024-02-02")
-                , "Cra 13 # 1-33"
+                , "Cra 13 #1-33"
                 , new HashSet<>()
         );
 
         Mockito.when(traineeFacadeService.getTraineeByUserUsername_("alejandro.mateus"))
                 .thenReturn(traineeResponse);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trainee/username")
+        mockMvc.perform(MockMvcRequestBuilders.get("/trainee/alejandro.mateus")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.username").value("alejandro.mateus"))
-                .andExpect(jsonPath("$.address").value("2024-02-02"));
+                .andExpect(jsonPath("$.user.userName").value("alejandro.mateus"))
+                .andExpect(jsonPath("$.dateOfBirth").value("2024-02-02"));
     }
 
     @Test
@@ -144,12 +147,12 @@ class TraineeRestControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.put("/trainee/trainers")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"trainee_username\":\"username\",\"trainer_usernames\":[\"alejandro.mateus\"]}")
+                        .content("{\"trainee_username\":\"username\",\"trainerUsernames\":[\"alejandro.mateus\"]}")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$[0].firstName").value("Alejandro"))
-                .andExpect(jsonPath("$[0].lastName").value("Mateus"))
-                .andExpect(jsonPath("$[0].userName").value("alejandro.mateus"));
+                .andExpect(jsonPath("$[0].user.firstName").value("Alejandro"))
+                .andExpect(jsonPath("$[0].user.lastName").value("Mateus"))
+                .andExpect(jsonPath("$[0].user.userName").value("alejandro.mateus"));
     }
 
     @Test
@@ -159,7 +162,7 @@ class TraineeRestControllerTest {
         String username = "alejandro.mateus";
 
         TraineeRecord.TraineeRequestWithTrainingParams traineeRequest =
-                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(periodFrom, periodTo, "alejandro.mateus", null));
+                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(periodFrom, periodTo, "", ""));
 
         List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = Collections.singletonList(
                 new TrainingRecord.TraineeTrainingResponse(
@@ -181,12 +184,93 @@ class TraineeRestControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/trainee/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("username", username)
-                        .param("periodFrom", periodFrom.toString())
-                        .param("periodTo", periodTo.toString())
+                        .param("periodFrom", String.valueOf(periodFrom))
+                        .param("periodTo", String.valueOf(periodTo))
+                        .param("trainerName","")
+                        .param("trainingType","")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()).
-                andExpect(jsonPath("$.trainingName").value("1st month"));
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$[0].trainingName").value("1st month"));
 
+    }
+
+    @Test
+    void deleteTrainee() throws Exception{
+        String username = "username";
+
+        mockMvc.perform(delete("/trainee/{username}", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(traineeFacadeService, times(1)).deleteByUserUserName(username);
+    }
+
+    @Test
+    void testDeleteTraineeFailure() throws Exception {
+        String username = "username";
+
+        doThrow(new RuntimeException("Simulated exception")).when(traineeFacadeService).deleteByUserUserName(username);
+
+        mockMvc.perform(delete("/trainee/{username}", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isConflict());
+
+        verify(traineeFacadeService, times(1)).deleteByUserUserName(username);
+    }
+
+    @Test
+    void testUpdateStatusSuccess() throws Exception {
+        String username = "testUsername";
+        boolean isActive = true;
+
+        mockMvc.perform(patch("/trainee")
+                        .param("username", username)
+                        .param("isActive", String.valueOf(isActive))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(traineeFacadeService, times(1)).updateStatus(username, isActive);
+    }
+
+    @Test
+    void testUpdateStatusFailure() throws Exception {
+        String username = "testUsername";
+        boolean isActive = true;
+
+        doThrow(new RuntimeException("Simulated exception")).when(traineeFacadeService).updateStatus(username, isActive);
+
+        mockMvc.perform(patch("/trainee")
+                        .param("username", username)
+                        .param("isActive", String.valueOf(isActive))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+
+        verify(traineeFacadeService, times(1)).updateStatus(username, isActive);
+    }
+
+    @Test
+    void testGetNotAssignedTrainersSuccess() throws Exception {
+        String username = "testUsername";
+
+        Set<TrainerRecord.TrainerResponse> trainersNotAssigned = new HashSet<>();
+
+        when(traineeFacadeService.getNotAssignedTrainersByTraineeUserUsername(username)).thenReturn(trainersNotAssigned);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/trainee/{username}/trainers-notAssigned", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.size()").value(trainersNotAssigned.size()));
+    }
+
+    @Test
+    void testGetNotAssignedTrainersNotFound() throws Exception {
+        String username = "testUsername";
+
+        when(traineeFacadeService.getNotAssignedTrainersByTraineeUserUsername(username)).thenReturn(null);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/trainee/{username}/trainers-notAssigned", username)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 }
                

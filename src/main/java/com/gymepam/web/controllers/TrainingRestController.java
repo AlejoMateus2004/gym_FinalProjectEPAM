@@ -7,12 +7,11 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
 
 @Api(tags = "Training Controller", value = "Operations for creating Trainings in the application")
 @AllArgsConstructor
@@ -26,7 +25,7 @@ public class TrainingRestController {
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @PostMapping
-    public ResponseEntity saveTraining(@RequestBody @Valid TrainingRecord.TrainingRequest trainingRequest){
+    public ResponseEntity saveTraining(@RequestBody @Validated TrainingRecord.TrainingRequest trainingRequest){
         return trainingFacade.saveTraining_(trainingRequest);
     }
 

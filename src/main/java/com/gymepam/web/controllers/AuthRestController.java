@@ -9,9 +9,9 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 
 @Api(tags = "Authentication Controller", value = "Operations for login, and change user password in the application")
 @AllArgsConstructor
@@ -23,7 +23,7 @@ public class AuthRestController {
 
     @ApiOperation(value = "Login", notes = "Log in to the systems")
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<AuthenticationResponse> login(@RequestBody @Validated AuthenticationRequest authenticationRequest) {
         return loginFacadeService.getAuthenticationResponse(authenticationRequest);
 
     }
@@ -32,7 +32,7 @@ public class AuthRestController {
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @PutMapping("/login")
-    public ResponseEntity changeLogin(@RequestBody @Valid ChangeLoginRequest authenticationRequest) {
+    public ResponseEntity changeLogin(@RequestBody @Validated ChangeLoginRequest authenticationRequest) {
         return loginFacadeService.changeAuthentication(authenticationRequest);
     }
 

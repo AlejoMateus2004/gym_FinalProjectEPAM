@@ -11,15 +11,17 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @Api(tags = "Trainee Controller", value = "Operations for creating, updating, retrieving and deleting Trainees in the application")
 @AllArgsConstructor
 @RestController
@@ -30,14 +32,14 @@ public class TraineeRestController {
 
     @ApiOperation(value = "Save Trainee", notes = "Register a new Trainee in the system")
     @PostMapping("/save")
-    public ResponseEntity<AuthenticationRequest> saveTrainee(@RequestBody @Valid TraineeRequest trainee){
+    public ResponseEntity<AuthenticationRequest> saveTrainee(@RequestBody @Validated TraineeRequest trainee){
         return traineeFacade.save_Trainee(trainee);
     }
     @ApiOperation(value = "Update Trainee", notes = "Update an existing Trainee")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @PutMapping("/update")
-    public ResponseEntity<TraineeResponseWithTrainers> updateTrainee(@RequestBody @Valid TraineeRecord.TraineeUpdateRequest traineeRequest){
+    public ResponseEntity<TraineeResponseWithTrainers> updateTrainee(@RequestBody @Validated TraineeRecord.TraineeUpdateRequest traineeRequest){
         TraineeResponseWithTrainers traineeResponse = traineeFacade.updateTrainee_(traineeRequest);
         if (traineeResponse == null) {
             return ResponseEntity.badRequest().build();
@@ -60,12 +62,12 @@ public class TraineeRestController {
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
     @PutMapping("/trainers")
-    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> updateTraineesTrainerList(@RequestBody @Valid TraineeRecord.TraineeTrainerList trainee){
+    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> updateTraineesTrainerList(@RequestBody @Validated TraineeRecord.TraineeTrainerList trainee){
         try {
             Set<TrainerRecord.TrainerResponse> trainers = traineeFacade.updateTraineesTrainerList(trainee.trainee_username(), trainee.trainerUsernames());
             return new ResponseEntity<>(trainers, HttpStatus.CREATED);
         }catch(Exception e){
-            System.out.println(e);
+            log.error("Error updating Trainee's Trainer List",e);
             return ResponseEntity.notFound().build();
         }
     }
@@ -75,13 +77,13 @@ public class TraineeRestController {
     @GetMapping("/trainings")
     public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeTrainingsList(
             @RequestParam(name = "username", required = true) String username,
-            @RequestParam(name = "periodFrom", required = false) LocalDate periodFrom,
-            @RequestParam(name = "periodTo", required = false) LocalDate periodTo,
+            @RequestParam(name = "periodFrom", required = false) String periodFrom,
+            @RequestParam(name = "periodTo", required = false) String periodTo,
             @RequestParam(name = "trainerName", required = false) String trainerName,
             @RequestParam(name = "trainingType", required = false) String trainingType) {
 
         TraineeRecord.TraineeRequestWithTrainingParams traineeRequest =
-                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(periodFrom, periodTo, trainerName, trainingType));
+                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(LocalDate.parse(periodFrom), LocalDate.parse(periodTo), trainerName, trainingType));
         List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = traineeFacade.getTraineeByUserUsernameWithTrainingParams_(traineeRequest);
         if (trainingsResponse == null) {
             return ResponseEntity.badRequest().build();
@@ -98,7 +100,7 @@ public class TraineeRestController {
             traineeFacade.deleteByUserUserName(username);
             return new ResponseEntity<>("Deleted user", HttpStatus.OK);
         }catch(Exception e){
-            System.out.println(e);
+            log.error("Error deleting Trainee",e);
             return new ResponseEntity<>("User not deleted", HttpStatus.CONFLICT);
         }
     }
