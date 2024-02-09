@@ -27,7 +27,7 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/**/login","/initStorageRealDb/**","/**/save",
+                .authorizeRequests().antMatchers("/**/public/*","/**/login","/initStorageRealDb/**","/**/save",
                     "/v2/api-docs/**",
                     "/configuration/ui/**",
                     "/swagger-resources/**",

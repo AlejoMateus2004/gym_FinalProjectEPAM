@@ -8,6 +8,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -17,9 +19,19 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RestController
 @RequestMapping("/auth")
+@Slf4j
 public class AuthRestController {
 
     LoginFacadeService loginFacadeService;
+
+    @GetMapping("/public/test")
+    public ResponseEntity<Void> test() throws Exception {
+        log.info("Invocando mi servicio");
+        if(true){
+            throw new Exception("Error de pruebas");
+        }
+        return ResponseEntity.ok().build();
+    }
 
     @ApiOperation(value = "Login", notes = "Log in to the systems")
     @PostMapping("/login")
@@ -35,5 +47,6 @@ public class AuthRestController {
     public ResponseEntity changeLogin(@RequestBody @Validated ChangeLoginRequest authenticationRequest) {
         return loginFacadeService.changeAuthentication(authenticationRequest);
     }
+
 
 }

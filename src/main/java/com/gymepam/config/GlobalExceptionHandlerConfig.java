@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -58,13 +59,20 @@ public class GlobalExceptionHandlerConfig extends ResponseEntityExceptionHandler
     }
 
 
+    record ExceptionResponse(String message, String code, String description){};
+
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleGenericException(Exception ex, WebRequest request) {
-        logger.error("Unhandled Exception", ex);
+    public ResponseEntity<ExceptionResponse> handleGenericException(Exception ex, WebRequest request) {
 
-        String errorMessage = "Error: Unhandled Exception. " + ex.getMessage();
+        String message = String.format("Error en la invocación de %s, Mensaje del error %s",
+                ((ServletWebRequest) request).getRequest().getRequestURL().toString(),
+                ex.getMessage()
+                );
+        logger.error( message );
 
-        return new ResponseEntity<>(errorMessage, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(
+                new ExceptionResponse( message, "EX001", "bla bla bla bla bla bla bla bla bla bla bla bla" )
+                , HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(ArrayIndexOutOfBoundsException.class)
