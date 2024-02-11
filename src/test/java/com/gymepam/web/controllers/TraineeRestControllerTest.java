@@ -45,9 +45,9 @@ class TraineeRestControllerTest {
 
     @Test
     void saveTrainee() throws Exception {
-        AuthenticationRequest authenticationRequest = new AuthenticationRequest();
-        authenticationRequest.setUsername("username");
-        authenticationRequest.setPassword("password");
+        AuthenticationRequest authenticationResponse= new AuthenticationRequest();
+        authenticationResponse.setUsername("username");
+        authenticationResponse.setPassword("password");
 
         String requestBody = "{\n" +
                 "  \"address\": \"Cra 13 #1-33\",\n" +
@@ -59,7 +59,7 @@ class TraineeRestControllerTest {
                 "}";
 
         Mockito.when(traineeFacadeService.save_Trainee(Mockito.any(TraineeRecord.TraineeRequest.class)))
-                .thenReturn(ResponseEntity.ok(authenticationRequest));
+                .thenReturn(ResponseEntity.ok(authenticationResponse));
 
         mockMvc.perform(MockMvcRequestBuilders.post("/trainee/save")
                         .contentType(MediaType.APPLICATION_JSON)

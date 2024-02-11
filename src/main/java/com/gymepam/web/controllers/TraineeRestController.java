@@ -7,33 +7,43 @@ import com.gymepam.domain.dto.records.TraineeRecord.TraineeResponseWithTrainers;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.service.facade.TraineeFacadeService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.validation.annotation.Validated;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
 @Api(tags = "Trainee Controller", value = "Operations for creating, updating, retrieving and deleting Trainees in the application")
-@AllArgsConstructor
 @RestController
 @RequestMapping("/trainee")
 public class TraineeRestController {
 
     TraineeFacadeService traineeFacade;
 
+    Counter trainee_registration_total;
+
+    public TraineeRestController(TraineeFacadeService traineeFacade, MeterRegistry meterRegistry) {
+        this.traineeFacade = traineeFacade;
+        this.trainee_registration_total = Counter.builder("trainee_registration_total")
+                .description("Total of successful trainee registration").register(meterRegistry);
+    }
+
     @ApiOperation(value = "Save Trainee", notes = "Register a new Trainee in the system")
     @PostMapping("/save")
     public ResponseEntity<AuthenticationRequest> saveTrainee(@RequestBody @Validated TraineeRequest trainee){
-        return traineeFacade.save_Trainee(trainee);
+       var response = traineeFacade.save_Trainee(trainee);
+        if (response.getBody() != null) trainee_registration_total.increment();
+        return response;
     }
     @ApiOperation(value = "Update Trainee", notes = "Update an existing Trainee")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
@@ -56,6 +66,7 @@ public class TraineeRestController {
         if (traineeResponse == null) {
             return ResponseEntity.badRequest().build();
         }
+
         return new ResponseEntity<>(traineeResponse, HttpStatus.OK);
     }
     @ApiOperation(value = "Update Trainee's Trainer List", notes = "Retrieve Trainee's Trainer List")

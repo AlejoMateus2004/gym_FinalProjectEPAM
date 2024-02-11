@@ -1,12 +1,8 @@
 package com.gymepam.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 @Data
@@ -15,8 +11,8 @@ import java.io.Serializable;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id", unique = true, nullable = false)
-    private Long Id;
+    @Column(name = "id", unique = true, nullable = false)
+    private Long id;
 
     @Column(name = "firstName", nullable = false)
     private String firstName;

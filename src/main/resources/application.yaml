@@ -1,6 +1,9 @@
+server:
+  port: 8080
+
 spring:
   profiles:
-    active: jpa
+    active: stg
 #      active: inmemory
   application:
     name: gym-final-project
@@ -11,16 +14,24 @@ spring:
   mvc:
     pathmatch:
       matching-strategy : ANT_PATH_MATCHER
-validate:
-  password: bcrypt
-  encoded:
-    enabled: false
 
-server:
-  port: 8080
+management:
+  server:
+    port: 9002
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  info:
+    env:
+      enabled: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+#      base-path: "/manage"
 
-# File path for storage initialization
-initializationStorageFile:
-  path: src/main/resources/static/InitialGymData.xlsx
-  active: false
 
+springdoc:
+  swagger-ui:
+    enabled: true
+  show-actuator: true

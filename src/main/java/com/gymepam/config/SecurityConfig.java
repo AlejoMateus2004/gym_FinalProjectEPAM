@@ -33,7 +33,9 @@ public class SecurityConfig {
                     "/swagger-resources/**",
                     "/configuration/**",
                     "/swagger-ui/**",
-                    "/webjars/**")
+                    "/webjars/**",
+                    "/actuator/**",
+                    "/h2-console/**")
                 .permitAll()
                 .antMatchers("/user/**")
                 .hasRole("TRAINEE")

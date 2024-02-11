@@ -1,0 +1,37 @@
+app.repository: jpa
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testDb
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+#  sql:
+#    init:
+#      mode: embedded
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+#      settings:
+#        trace: false
+#        web-allow-others: false
+
+# File path for storage initialization
+initializationStorageFile:
+  path: src/main/resources/static/InitialGymData.xlsx
+  active: false
+
+validate:
+  password: bcrypt
+  encoded:
+    enabled: true
+
+
+
