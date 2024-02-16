@@ -26,13 +26,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Service
 public class TraineeFacadeService extends TraineeService{
-    GeneratePassword generatePassword;
+    private GeneratePassword generatePassword;
 
-    TrainerService trainerService;
+    private TrainerService trainerService;
 
-    TraineeMapper traineeMapper;
+    private TraineeMapper traineeMapper;
 
-    TrainerMapper trainerMapper;
+    private TrainerMapper trainerMapper;
 
 
 

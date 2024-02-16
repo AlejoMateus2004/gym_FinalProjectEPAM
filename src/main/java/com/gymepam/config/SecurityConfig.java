@@ -2,7 +2,8 @@ package com.gymepam.config;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,18 +28,20 @@ public class SecurityConfig {
                 .csrf().disable()
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests().antMatchers("/**/public/*","/**/login","/initStorageRealDb/**","/**/save",
-                    "/v2/api-docs/**",
-                    "/configuration/ui/**",
-                    "/swagger-resources/**",
-                    "/configuration/**",
-                    "/swagger-ui/**",
-                    "/webjars/**",
-                    "/actuator/**",
-                    "/h2-console/**")
+                .authorizeRequests()
+                .antMatchers(
+            "/**/public/**",
+                        "/v2/api-docs/**",
+                        "/configuration/ui/**",
+                        "/swagger-resources/**",
+                        "/configuration/**",
+                        "/swagger-ui/**",
+                        "/webjars/**",
+                        "/actuator/**",
+                        "/h2-console/**")
                 .permitAll()
-                .antMatchers("/user/**")
-                .hasRole("TRAINEE")
+                .antMatchers("/trainee/**").hasRole("TRAINEE")
+                .antMatchers("/trainer/**").hasRole("TRAINER")
                 .anyRequest()
                 .authenticated()
                 .and()

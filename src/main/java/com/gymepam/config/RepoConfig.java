@@ -3,7 +3,9 @@ package com.gymepam.config;
 import com.gymepam.dao.*;
 import com.gymepam.dao.inMemory.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackages = "com.gymepam")

@@ -1,12 +1,9 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TraineeRepo;
-import com.gymepam.domain.dto.records.TraineeRecord;
-import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;
-import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +15,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,8 +34,7 @@ class TraineeServiceTest {
     private ValidatePassword valPassword;
     @Mock
     private EncryptPassword encryptPass;
-    @Mock
-    private FormatDate formatDate;
+
     @Mock
     private GenerateUserName genUserName;
     @InjectMocks

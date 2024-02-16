@@ -64,14 +64,28 @@ public class GlobalExceptionHandlerConfig extends ResponseEntityExceptionHandler
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionResponse> handleGenericException(Exception ex, WebRequest request) {
 
-        String message = String.format("Error en la invocación de %s, Mensaje del error %s",
+        String message = String.format("Error in invocation of %s, Error message of %s",
                 ((ServletWebRequest) request).getRequest().getRequestURL().toString(),
                 ex.getMessage()
                 );
         logger.error( message );
 
         return new ResponseEntity<>(
-                new ExceptionResponse( message, "EX001", "bla bla bla bla bla bla bla bla bla bla bla bla" )
+                new ExceptionResponse( message, "EX001", "Exception generated " )
+                , HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ExceptionResponse> handleRuntimeException(RuntimeException ex, WebRequest request) {
+
+        String message = String.format("Error in invocation of %s, Error message of %s",
+                ((ServletWebRequest) request).getRequest().getRequestURL().toString(),
+                ex.getMessage()
+        );
+        logger.error( message );
+
+        return new ResponseEntity<>(
+                new ExceptionResponse( message, "EX001", "Runtime Exception generated " )
                 , HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

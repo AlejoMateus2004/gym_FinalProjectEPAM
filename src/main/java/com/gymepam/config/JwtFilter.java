@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -46,7 +46,7 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String username = this.jwtUtil.getUsername(jwt);
-        User user = (User) this.userDetailsService.loadUserByUsername(username);
+        UserDetails user = this.userDetailsService.loadUserByUsername(username);
 
         if (user != null && user.isEnabled() == true) {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(

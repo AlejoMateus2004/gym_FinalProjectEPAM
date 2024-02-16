@@ -10,15 +10,15 @@ import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
+@Primary
 @Service
 public class TraineeService {
 

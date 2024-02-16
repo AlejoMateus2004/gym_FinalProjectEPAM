@@ -60,7 +60,7 @@ class TrainerRestControllerTest {
         Mockito.when(trainerFacadeService.save_Trainer(Mockito.any(TrainerRecord.TrainerRequest.class)))
                 .thenReturn(ResponseEntity.ok(authenticationRequest));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/trainer/save")
+        mockMvc.perform(MockMvcRequestBuilders.post("/trainer/public/save")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
                         .accept(MediaType.APPLICATION_JSON))

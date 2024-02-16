@@ -1,7 +1,6 @@
 package com.gymepam.dao;
 
 import com.gymepam.domain.entities.Trainer;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;

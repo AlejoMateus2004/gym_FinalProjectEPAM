@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+    <conversionRule conversionWord="highlight" converterClass="org.springframework.boot.logging.logback.ColorConverter" />
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%X{transactionId}] %-5level %msg - \(%class{0}.%M.%L\) %n</pattern>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <pattern>
+                %d{HH:mm} %highlight(%-5level) %replace([%-48magenta(%X{transactionId})]){' ','-'}  %replace(%-45cyan(\(%class{0}.%L\))){' ','-'} : %msg%n
+            </pattern>
         </encoder>
     </appender>
 

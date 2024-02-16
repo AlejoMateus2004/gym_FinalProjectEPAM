@@ -26,7 +26,7 @@ public class TrainerRestController {
 
     TrainerFacadeService trainerFacade;
     @ApiOperation(value = "Save Trainer", notes = "Register a new Trainer in the system")
-    @PostMapping("/save")
+    @PostMapping("/public/save")
     public ResponseEntity<AuthenticationRequest> saveTrainer(@RequestBody @Validated TrainerRecord.TrainerRequest trainer){
         return trainerFacade.save_Trainer(trainer);
     }

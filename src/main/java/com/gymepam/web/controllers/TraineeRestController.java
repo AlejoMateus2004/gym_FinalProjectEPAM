@@ -39,7 +39,7 @@ public class TraineeRestController {
     }
 
     @ApiOperation(value = "Save Trainee", notes = "Register a new Trainee in the system")
-    @PostMapping("/save")
+    @PostMapping("/public/save")
     public ResponseEntity<AuthenticationRequest> saveTrainee(@RequestBody @Validated TraineeRequest trainee){
        var response = traineeFacade.save_Trainee(trainee);
         if (response.getBody() != null) trainee_registration_total.increment();

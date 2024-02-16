@@ -20,7 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@AutoConfigureMockMvc
+@AutoConfigureMockMvc(addFilters = false)
 @ExtendWith(SpringExtension.class)
 class AuthRestControllerTest {
 
@@ -42,7 +42,7 @@ class AuthRestControllerTest {
         Mockito.when(loginFacadeService.getAuthenticationResponse(Mockito.any(AuthenticationRequest.class)))
                 .thenReturn(ResponseEntity.ok(mockedResponse));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+        mockMvc.perform(MockMvcRequestBuilders.post("/auth/public/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"username\",\"password\":\"password\"}")
                         .accept(MediaType.APPLICATION_JSON))

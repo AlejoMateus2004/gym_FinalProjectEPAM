@@ -7,12 +7,16 @@ import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.Trainer;
 import com.gymepam.service.TraineeService;
 import com.gymepam.service.TrainerService;
+import com.gymepam.service.UserService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -39,6 +43,14 @@ class LoginFacadeServiceTest {
 
     @Mock
     private JwtUtil jwtUtil;
+    @Mock
+    MeterRegistry meterRegistry;
+
+    @Mock
+    private UserService userService;
+
+    @Mock
+    private Counter sessionCounter;
 
     @InjectMocks
     private LoginFacadeService loginFacadeService;
@@ -57,7 +69,7 @@ class LoginFacadeServiceTest {
         request.setPassword("password");
         when(authenticationManager.authenticate(any())).thenReturn(null);
         when(jwtUtil.create("username")).thenReturn("fakeJwtToken");
-
+//        when(meterRegistry.counter("sessionCounter")).thenReturn(sessionCounter);
         ResponseEntity<AuthenticationResponse> responseEntity = loginFacadeService.getAuthenticationResponse(request);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());

@@ -11,12 +11,12 @@ spring:
     generate-ddl: true
     show-sql: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
 
 # File path for storage initialization
 initializationStorageFile:
   path: src/main/resources/static/InitialGymData.xlsx
-  active: true
+  active: false
 
 validate:
   password: bcrypt
