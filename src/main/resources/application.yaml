@@ -3,7 +3,7 @@ server:
 
 spring:
   profiles:
-    active: stg
+    active: dev
 #      active: inmemory
   application:
     name: gym-final-project
