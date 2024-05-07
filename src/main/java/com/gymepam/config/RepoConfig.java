@@ -1,7 +1,7 @@
 package com.gymepam.config;
 
 import com.gymepam.dao.*;
-import com.gymepam.dao.inMemory.*;
+import com.gymepam.dao.inmemory.*;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

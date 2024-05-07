@@ -1,5 +1,7 @@
-
-app.repository: jpa
+server:
+  port: 8080
+app:
+  repository: jpa
 
 spring:
   datasource:

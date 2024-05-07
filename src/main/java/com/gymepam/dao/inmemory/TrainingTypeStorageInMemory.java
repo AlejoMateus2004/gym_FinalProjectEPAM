@@ -1,4 +1,4 @@
-package com.gymepam.dao.inMemory;
+package com.gymepam.dao.inmemory;
 
 import com.gymepam.dao.TrainingTypeRepo;
 import com.gymepam.domain.entities.TrainingType;

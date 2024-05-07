@@ -7,7 +7,6 @@ import com.gymepam.domain.entities.Training;
 import com.gymepam.service.TraineeService;
 import com.gymepam.service.TrainerService;
 import com.gymepam.service.TrainingService;
-import com.gymepam.service.util.FormatDate;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +18,6 @@ public class TrainingFacadeService extends TrainingService {
 
     TraineeService traineeService;
     TrainerService trainerService;
-
-    FormatDate formatDate;
 
     public ResponseEntity saveTraining_(TrainingRecord.TrainingRequest trainingRequest) {
         try {

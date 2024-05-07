@@ -1,10 +1,6 @@
-server:
-  port: 8080
-
 spring:
   profiles:
     active: dev
-#      active: inmemory
   application:
     name: gym-final-project
   servlet:
@@ -14,6 +10,9 @@ spring:
   mvc:
     pathmatch:
       matching-strategy : ANT_PATH_MATCHER
+#  config:
+#    activate:
+#      on-profile: dev
 
 management:
   server:
@@ -29,7 +28,6 @@ management:
     health:
       show-details: ALWAYS
 #      base-path: "/manage"
-
 
 springdoc:
   swagger-ui:
