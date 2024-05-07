@@ -1,3 +1,5 @@
+server:
+  port: 8080
 database.elastic:
   port: 9003
   hostname: localhost

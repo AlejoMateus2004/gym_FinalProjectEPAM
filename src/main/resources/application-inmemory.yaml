@@ -1,4 +1,7 @@
-app.repository: in-memory
+server:
+  port: 8080
+app:
+  repository: in-memory
 
 spring:
   autoconfigure:
