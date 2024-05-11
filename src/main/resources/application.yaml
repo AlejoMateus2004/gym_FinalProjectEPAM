@@ -1,8 +1,8 @@
 spring:
   profiles:
-    active: dev
+    active: dev, eureka_server
   application:
-    name: gym-final-project
+    name: users-gym-service
   servlet:
     multipart:
       max-file-size: 20MB
@@ -13,7 +13,9 @@ spring:
 #  config:
 #    activate:
 #      on-profile: dev
-
+  cloud:
+    config:
+      enabled: false
 management:
   server:
     port: 9002

@@ -7,6 +7,7 @@ import com.gymepam.domain.dto.records.TraineeRecord.TraineeResponseWithTrainers;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.service.facade.TraineeFacadeService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
@@ -18,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -45,6 +45,7 @@ public class TraineeRestController {
         if (response.getBody() != null) trainee_registration_total.increment();
         return response;
     }
+
     @ApiOperation(value = "Update Trainee", notes = "Update an existing Trainee")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
@@ -69,6 +70,7 @@ public class TraineeRestController {
 
         return new ResponseEntity<>(traineeResponse, HttpStatus.OK);
     }
+
     @ApiOperation(value = "Update Trainee's Trainer List", notes = "Retrieve Trainee's Trainer List")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
@@ -82,24 +84,14 @@ public class TraineeRestController {
             return ResponseEntity.notFound().build();
         }
     }
+
     @ApiOperation(value = "Get Trainee Trainings List", notes = "Retrieve Trainee's Training List")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
-    @GetMapping("/trainings")
-    public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeTrainingsList(
-            @RequestParam(name = "username", required = true) String username,
-            @RequestParam(name = "periodFrom", required = false) String periodFrom,
-            @RequestParam(name = "periodTo", required = false) String periodTo,
-            @RequestParam(name = "trainerName", required = false) String trainerName,
-            @RequestParam(name = "trainingType", required = false) String trainingType) {
-
-        TraineeRecord.TraineeRequestWithTrainingParams traineeRequest =
-                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(LocalDate.parse(periodFrom), LocalDate.parse(periodTo), trainerName, trainingType));
-        List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = traineeFacade.getTraineeByUserUsernameWithTrainingParams_(traineeRequest);
-        if (trainingsResponse == null) {
-            return ResponseEntity.badRequest().build();
-        }
-        return new ResponseEntity<>(trainingsResponse, HttpStatus.OK);
+//    @CircuitBreaker(name = "trainingCB", fallbackMethod = "fallGetTraineeByTrainingParams")
+    @PostMapping("/trainings")
+    public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeByTrainingParams(@RequestBody TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
+        return traineeFacade.getTraineeByUserUsernameWithTrainingParams(traineeRequest);
     }
 
     @ApiOperation(value = "Delete Trainee")
@@ -108,7 +100,7 @@ public class TraineeRestController {
     @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteTrainee(@PathVariable String username){
         try {
-            traineeFacade.deleteByUserUserName(username);
+            traineeFacade.deleteTraineeByUserName(username);
             return new ResponseEntity<>("Deleted user", HttpStatus.OK);
         }catch(Exception e){
             log.error("Error deleting Trainee",e);
@@ -124,7 +116,6 @@ public class TraineeRestController {
         return traineeFacade.updateStatus(username, isActive);
     }
 
-
     @ApiOperation(value = "Get Not Assigned Trainers On Trainee", notes = "Get Not Assigned Trainers On Active Trainee")
     @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
             dataTypeClass = String.class, paramType = "header", example = "Bearer")
@@ -136,11 +127,4 @@ public class TraineeRestController {
         }
         return new ResponseEntity<>(trainersNotAssigned, HttpStatus.OK);
     }
-
-
-
-
-
-
-
 }

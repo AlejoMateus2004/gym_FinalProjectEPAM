@@ -26,12 +26,12 @@ import javax.validation.constraints.NotBlank;
 public class LoginFacadeService {
 
 
-    private AuthenticationManager authenticationManager;
-    private JwtUtil jwtUtil;
-    private TraineeService traineeService;
-    private TrainerService trainerService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtUtil jwtUtil;
+    private final TraineeService traineeService;
+    private final TrainerService trainerService;
 
-    private UserService userService;
+    private final UserService userService;
     Counter sessionCounter;
     public LoginFacadeService(AuthenticationManager authenticationManager, JwtUtil jwtUtil, TraineeService traineeService, TrainerService trainerService, MeterRegistry meterRegistry, UserService userService) {
         this.authenticationManager = authenticationManager;
@@ -88,11 +88,11 @@ public class LoginFacadeService {
         boolean isUpdated = false;
         Trainee trainee = traineeService.getTraineeByUserUsername(username);
         if (trainee != null) {
-            isUpdated = traineeService.updatePassword(username,oldPassword,newPassword) != null ? true : false;
+            isUpdated = traineeService.updatePassword(username, oldPassword, newPassword) != null;
         } else {
             Trainer trainer = trainerService.getTrainerByUserUsername(username);
             if (trainer != null) {
-                isUpdated = trainerService.updatePassword(username,oldPassword,newPassword) != null ? true : false;
+                isUpdated = trainerService.updatePassword(username, oldPassword, newPassword) != null;
             }
         }
 

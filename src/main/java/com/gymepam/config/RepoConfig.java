@@ -25,12 +25,6 @@ public class RepoConfig {
 
     @Bean
     @ConditionalOnProperty(name = "app.repository", havingValue = "jpa")
-    public TrainingRepo jpaTrainingRepoBean(TrainingRepository trainingRepository) {
-        return trainingRepository;
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "app.repository", havingValue = "jpa")
     public TrainingTypeRepo jpaTrainingTypeRepoBean(TrainingTypeRepository trainingTypeRepository) {
         return trainingTypeRepository;
     }
@@ -51,12 +45,6 @@ public class RepoConfig {
     @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
     public TrainerRepo inMemoryTrainerRepoBean() {
         return new TrainerStorageInMemory();
-    }
-
-    @Bean
-    @ConditionalOnProperty(name = "app.repository", havingValue = "in-memory")
-    public TrainingRepo inMemoryTrainingRepoBean() {
-        return new TrainingStorageInMemory();
     }
 
     @Bean

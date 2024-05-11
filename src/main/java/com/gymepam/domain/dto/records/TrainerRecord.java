@@ -31,11 +31,6 @@ public class TrainerRecord {
     ) {
     }
 
-    public record TrainerUserResponse(
-            UserRecord.UserRequest user
-    ) {
-    }
-
     public record TrainerRequestWithTrainingParams(
             @NotBlank(message = "Trainer username can't be null or empty")
             String trainer_username,

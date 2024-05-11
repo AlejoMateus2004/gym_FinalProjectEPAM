@@ -11,6 +11,7 @@ import com.gymepam.mapper.TraineeMapper;
 import com.gymepam.mapper.TrainerMapper;
 import com.gymepam.service.TraineeService;
 import com.gymepam.service.TrainerService;
+import com.gymepam.service.feignClients.TrainingFeignClient;
 import com.gymepam.service.util.GeneratePassword;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 @Service
-public class TraineeFacadeService extends TraineeService{
+public class TraineeFacadeService{
+
+    private TraineeService traineeService;
+
     private GeneratePassword generatePassword;
 
     private TrainerService trainerService;
@@ -34,6 +38,7 @@ public class TraineeFacadeService extends TraineeService{
 
     private TrainerMapper trainerMapper;
 
+    private TrainingFeignClient trainingFeignClient;
 
 
     public ResponseEntity<AuthenticationRequest> save_Trainee(TraineeRecord.TraineeRequest traineeRequest) {
@@ -45,7 +50,7 @@ public class TraineeFacadeService extends TraineeService{
 
         trainee.setUser(user);
 
-        Trainee temp = saveTrainee(trainee);
+        Trainee temp = traineeService.saveTrainee(trainee);
         if (temp == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -57,33 +62,35 @@ public class TraineeFacadeService extends TraineeService{
         return new ResponseEntity<>(newAuth, HttpStatus.CREATED);
     }
 
-
     public TraineeRecord.TraineeResponseWithTrainers getTraineeByUserUsername_(String username) {
-        Trainee trainee =getTraineeByUserUsername(username);
+        Trainee trainee = traineeService.getTraineeByUserUsername(username);
         return  traineeMapper.traineeToTraineeResponseWithTrainers(trainee);
     }
 
     public TraineeRecord.TraineeResponseWithTrainers updateTrainee_(TraineeRecord.TraineeUpdateRequest traineeRequest) {
 
-        Trainee trainee_ = updateTrainee(traineeMapper.traineeUpdateRequestToTrainee(traineeRequest));
-        TraineeRecord.TraineeResponseWithTrainers trainee = traineeMapper.traineeToTraineeResponseWithTrainers(trainee_);
-        return trainee;
+        Trainee trainee = traineeService.updateTrainee(traineeMapper.traineeUpdateRequestToTrainee(traineeRequest));
+        return traineeMapper.traineeToTraineeResponseWithTrainers(trainee);
     }
-    public List<TrainingRecord.TraineeTrainingResponse> getTraineeByUserUsernameWithTrainingParams_(TraineeRecord.TraineeRequestWithTrainingParams traineeRequest) {
-        if (traineeRequest.trainee_username() == null || traineeRequest.trainee_username().isEmpty()) {
-            return null;
+
+    public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeByUserUsernameWithTrainingParams(TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
+        if (traineeRequest == null || traineeRequest.traineeUsername() == null || traineeRequest.traineeUsername().isEmpty()) {
+            return ResponseEntity.badRequest().build(); // Return a bad request response if trainer username is missing
         }
-        Trainee trainee = getTraineeByUserUsernameWithTrainingParams(traineeRequest);
-        TraineeRecord.TraineeResponseWithTrainings traineeResponse = traineeMapper.traineeToTraineeResponseWithTrainings(trainee);
-        if (traineeResponse == null) {
-            return null;
+
+        try {
+            return trainingFeignClient.getTraineeTrainingListByTrainingParams(
+                    traineeRequest
+            );
+        } catch (Exception ex) {
+            log.error("Error fetching training microservice", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Return server error response
         }
-        return traineeResponse.trainingList();
     }
 
     public Set<TrainerRecord.TrainerResponse> updateTraineesTrainerList(String username, Set<String> trainer_usernames){
         try{
-            Trainee trainee = getTraineeByUserUsername(username);
+            Trainee trainee = traineeService.getTraineeByUserUsername(username);
             if (trainee == null) {
                 return null;
             }
@@ -95,7 +102,7 @@ public class TraineeFacadeService extends TraineeService{
                 }
             });
             trainee.setTrainerList(trainers);
-            Trainee trainee_ = updateTrainee(trainee);
+            Trainee trainee_ = traineeService.updateTrainee(trainee);
             return traineeMapper.traineeToTraineeResponseWithTrainers(trainee_).trainerList();
 
         }catch(Exception e){
@@ -104,15 +111,15 @@ public class TraineeFacadeService extends TraineeService{
         return null;
     }
 
-    public ResponseEntity updateStatus(String username, boolean isActive) {
-        Trainee trainee = getTraineeByUserUsername(username);
+    public ResponseEntity<Void> updateStatus(String username, boolean isActive) {
+        Trainee trainee = traineeService.getTraineeByUserUsername(username);
         if (trainee == null) {
             return ResponseEntity.notFound().build();
         }
         User user = trainee.getUser();
         user.setIsActive(isActive);
         trainee.setUser(user);
-        if (updateTrainee(trainee) == null){
+        if (traineeService.updateTrainee(trainee) == null){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -126,4 +133,10 @@ public class TraineeFacadeService extends TraineeService{
                 .map(trainerMapper::trainerToTrainerResponse)
                 .collect(Collectors.toSet());
     }
+
+    public void deleteTraineeByUserName(String username) {
+        Trainee trainee = traineeService.getTraineeByUserUsername(username);
+        traineeService.deleteTrainee(trainee);
+    }
+
 }

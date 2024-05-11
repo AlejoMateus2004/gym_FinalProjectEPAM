@@ -21,6 +21,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 
+import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
@@ -76,7 +78,7 @@ class LoginFacadeServiceTest {
 
         // then | assert
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("username", responseEntity.getBody().getUsername());
+        assertEquals("username", Objects.requireNonNull(responseEntity.getBody()).getUsername());
         assertEquals("fakeJwtToken", responseEntity.getBody().getJwt());
 
     }

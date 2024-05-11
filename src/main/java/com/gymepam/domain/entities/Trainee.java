@@ -1,6 +1,5 @@
 package com.gymepam.domain.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -9,7 +8,6 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,13 +30,6 @@ public class Trainee implements Serializable {
 
     @Column(name = "address", nullable = true)
     private String address;
-
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Training> trainingList;
-
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

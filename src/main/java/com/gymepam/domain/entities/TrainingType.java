@@ -14,6 +14,6 @@ public class TrainingType implements Serializable {
     @Column(name = "Id", nullable = false)
     private Long Id;
 
-    @Column(name = "trainingTypeName", nullable = true)
+    @Column(name = "trainingTypeName")
     private String trainingTypeName;
 }

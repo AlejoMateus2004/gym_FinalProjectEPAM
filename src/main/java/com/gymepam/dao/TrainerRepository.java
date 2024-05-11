@@ -25,16 +25,16 @@ public interface TrainerRepository extends JpaRepository<Trainer, Long>, Trainer
             "AND NOT EXISTS (SELECT 1 FROM t.traineeList trainee WHERE trainee.user.userName = :traineeUsername)")
     Set<Trainer> findActiveTrainersNotAssignedToTrainee(@Param("traineeUsername") String traineeUsername);
 
-    @Query("SELECT DISTINCT t FROM Trainer t " +
-            "LEFT JOIN FETCH t.trainingList tr " +
-            "WHERE t.user.userName = :userName " +
-            "AND (:periodFrom IS NULL OR tr.trainingDate >= :periodFrom) " +
-            "AND (:periodTo IS NULL OR tr.trainingDate <= :periodTo) " +
-            "AND (COALESCE(:traineeName, '') = '' OR LOWER(tr.trainee.user.firstName) LIKE LOWER(:traineeName)) ")
-    Trainer findTrainerByUserUsernameWithTrainingParams(
-            @Param("userName") String userName,
-            @Param("periodFrom") LocalDate periodFrom,
-            @Param("periodTo") LocalDate periodTo,
-            @Param("traineeName") String traineeName
-    );
+//    @Query("SELECT DISTINCT t FROM Trainer t " +
+//            "LEFT JOIN FETCH t.trainingList tr " +
+//            "WHERE t.user.userName = :userName " +
+//            "AND (:periodFrom IS NULL OR tr.trainingDate >= :periodFrom) " +
+//            "AND (:periodTo IS NULL OR tr.trainingDate <= :periodTo) " +
+//            "AND (COALESCE(:traineeName, '') = '' OR LOWER(tr.trainee.user.firstName) LIKE LOWER(:traineeName)) ")
+//    Trainer findTrainerByUserUsernameWithTrainingParams(
+//            @Param("userName") String userName,
+//            @Param("periodFrom") LocalDate periodFrom,
+//            @Param("periodTo") LocalDate periodTo,
+//            @Param("traineeName") String traineeName
+//    );
 }

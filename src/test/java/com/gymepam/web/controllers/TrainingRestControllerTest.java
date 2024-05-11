@@ -1,7 +1,7 @@
 package com.gymepam.web.controllers;
 
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.service.facade.TrainingFacadeService;
+import com.gymepam.service.TrainingService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,8 @@ class TrainingRestControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private TrainingFacadeService trainingFacade;
+    private TrainingService trainingService;
+
     @Test
     void saveTraining() throws Exception {
         String requestBody = "{\n" +
@@ -42,16 +43,16 @@ class TrainingRestControllerTest {
                 "  \"trainingDuration\": 60\n" +
                 "}";
 
-        when(trainingFacade.saveTraining_(any(TrainingRecord.TrainingRequest.class)))
-                .thenReturn(new ResponseEntity("Training saved successfully", HttpStatus.CREATED));
+        when(trainingService.saveTraining(any(TrainingRecord.TrainingRequest.class)))
+                .thenReturn(new ResponseEntity("Training saved successfully", HttpStatus.OK));
 
         MvcResult result = mockMvc.perform(post("/training")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody)
                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isCreated())
+                        .andExpect(status().isOk())
                         .andReturn();
 
-        verify(trainingFacade, times(1)).saveTraining_(any(TrainingRecord.TrainingRequest.class));
+        verify(trainingService, times(1)).saveTraining(any(TrainingRecord.TrainingRequest.class));
     }
 }

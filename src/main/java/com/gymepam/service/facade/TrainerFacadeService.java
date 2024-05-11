@@ -1,5 +1,6 @@
 package com.gymepam.service.facade;
 
+import com.gymepam.dao.TrainerRepo;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
@@ -7,7 +8,11 @@ import com.gymepam.domain.entities.Trainer;
 import com.gymepam.domain.entities.User;
 import com.gymepam.mapper.TrainerMapper;
 import com.gymepam.service.TrainerService;
+import com.gymepam.service.feignClients.TrainingFeignClient;
+import com.gymepam.service.util.EncryptPassword;
 import com.gymepam.service.util.GeneratePassword;
+import com.gymepam.service.util.GenerateUserName;
+import com.gymepam.service.util.ValidatePassword;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,13 +22,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Slf4j
-@AllArgsConstructor
 @Service
-public class TrainerFacadeService extends TrainerService{
+@AllArgsConstructor
+public class TrainerFacadeService{
 
-    GeneratePassword generatePassword;
-    TrainerMapper trainerMapper;
 
+    private GeneratePassword generatePassword;
+    private TrainerMapper trainerMapper;
+    private TrainingFeignClient trainingFeignClient;
+
+    private TrainerService trainerService;
 
     public ResponseEntity<AuthenticationRequest> save_Trainer(TrainerRecord.TrainerRequest trainerRequest) {
         Trainer trainer = trainerMapper.trainerRequestToTrainer(trainerRequest);
@@ -34,7 +42,7 @@ public class TrainerFacadeService extends TrainerService{
 
         trainer.setUser(user);
 
-        Trainer temp = saveTrainer(trainer);
+        Trainer temp = trainerService.saveTrainer(trainer);
         if (temp == null) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
@@ -47,38 +55,41 @@ public class TrainerFacadeService extends TrainerService{
     }
 
     public TrainerRecord.TrainerResponseWithTrainees getTrainerByUserUsername_(String username) {
-        Trainer trainer =getTrainerByUserUsername(username);
+        Trainer trainer = trainerService.getTrainerByUserUsername(username);
         return  trainerMapper.trainerToTrainerResponseWithTrainees(trainer);
 
     }
 
     public TrainerRecord.TrainerResponseWithTrainees updateTrainer_(TrainerRecord.TrainerUpdateRequest trainerRequest) {
-        Trainer trainer_ = updateTrainer(trainerMapper.trainerUpdateRequestToTrainer(trainerRequest));
-        TrainerRecord.TrainerResponseWithTrainees trainer = trainerMapper.trainerToTrainerResponseWithTrainees(trainer_);
-        return trainer;
+        Trainer trainer_ = trainerService.updateTrainer(trainerMapper.trainerUpdateRequestToTrainer(trainerRequest));
+        return trainerMapper.trainerToTrainerResponseWithTrainees(trainer_);
     }
 
-    public List<TrainingRecord.TrainerTrainingResponse> getTrainerByUserUsernameWithTrainingParams_(TrainerRecord.TrainerRequestWithTrainingParams trainerRequest) {
-        if (trainerRequest.trainer_username() == null || trainerRequest.trainer_username().isEmpty()) {
-            return null;
+    public ResponseEntity<List<TrainingRecord.TrainerTrainingResponse>> getTrainerByUserUsernameWithTrainingParams(TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
+        if (trainerRequest == null || trainerRequest.trainerUsername() == null || trainerRequest.trainerUsername().isEmpty()) {
+            return ResponseEntity.badRequest().build(); // Return a bad request response if trainer username is missing
         }
-        Trainer trainer = getTrainerByUserUsernameWithTrainingParams(trainerRequest);
-        TrainerRecord.TrainerResponseWithTrainings trainerResponse = trainerMapper.trainerToTrainerResponseWithTrainings(trainer);
-        if (trainerResponse == null) {
-            return null;
+
+        try {
+            return trainingFeignClient.getTrainerTrainingListByTrainingParams(
+                    trainerRequest
+            );
+        } catch (Exception ex) {
+            log.error("Error fetching training microservice", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Return server error response
         }
-        return trainerResponse.trainingList();
     }
+
 
     public ResponseEntity updateStatus(String username, boolean isActive) {
-        Trainer trainer = getTrainerByUserUsername(username);
+        Trainer trainer = trainerService.getTrainerByUserUsername(username);
         if (trainer == null) {
             return ResponseEntity.notFound().build();
         }
         User user = trainer.getUser();
         user.setIsActive(isActive);
         trainer.setUser(user);
-        if (updateTrainer(trainer) == null){
+        if (trainerService.updateTrainer(trainer) == null){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();

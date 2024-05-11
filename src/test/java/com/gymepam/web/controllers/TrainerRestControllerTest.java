@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -127,47 +128,45 @@ class TrainerRestControllerTest {
     }
 
     @Test
-    void getTrainerByTrainingParams() throws Exception{
+    void getTraineeByTrainingParams() throws Exception {
         LocalDate periodFrom = LocalDate.parse("2024-01-01");
         LocalDate periodTo = LocalDate.now();
-        String username = "alejandro.mateus";
+        String trainerUsername = "trainer.username";
+        String traineeUsername = "trainee.username";
 
-        TrainerRecord.TrainerRequestWithTrainingParams trainerRequest =
-                new TrainerRecord.TrainerRequestWithTrainingParams(
-                        username,
-                        new TrainingRecord.TrainingFilterRequest(
-                                periodFrom,
-                                periodTo,
-                                "",
-                                null));
+        TrainingRecord.TrainerTrainingParamsRequest trainerRequest = new TrainingRecord.TrainerTrainingParamsRequest(
+                periodFrom,
+                periodTo,
+                trainerUsername,
+                traineeUsername
+        );
 
         List<TrainingRecord.TrainerTrainingResponse> trainingsResponse = Collections.singletonList(
                 new TrainingRecord.TrainerTrainingResponse(
-                        "1st month",
-                        LocalDate.parse("2024-01-01"),
-                        new TraineeRecord.TraineeUserResponse(
-                                new UserRecord.UserRequest(
-                                        "Alejandro",
-                                        "Mateus"
-                                )
-                        ),
-                        null
+                        1L,
+                        "TRAINING1",
+                        LocalDate.parse("2024-02-01"),
+                        trainerUsername
                 )
         );
 
-        Mockito.when(trainerFacadeService.getTrainerByUserUsernameWithTrainingParams_(trainerRequest))
-                .thenReturn(trainingsResponse);
+        Mockito.when(trainerFacadeService.getTrainerByUserUsernameWithTrainingParams(trainerRequest))
+                .thenReturn(new ResponseEntity<>(trainingsResponse, HttpStatus.OK));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trainer/trainings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/trainer/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", username)
-                        .param("periodFrom", String.valueOf(periodFrom))
-                        .param("periodTo", String.valueOf(periodTo))
-                        .param("traineeName","")
+                        .content("{\n" +
+                                "  \"periodFrom\": \"2024-01-01\",\n" +
+                                "  \"periodTo\": \"2024-05-11\",\n" +
+                                "  \"trainerUsername\": \"trainer.username\",\n" +
+                                "  \"traineeUsername\": \"trainee.username\"\n" +
+                                "}")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].trainingName").value("1st month"));
-
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
+                .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
+                .andExpect(jsonPath("$[0].trainerUsername").value(trainerUsername));
     }
 
 

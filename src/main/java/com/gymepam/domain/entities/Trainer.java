@@ -29,11 +29,6 @@ public class Trainer implements Serializable {
     @JoinColumn(name = "specializationId")
     private TrainingType trainingType;
 
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
-    @JsonIgnore
-    @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Training> trainingList;
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude

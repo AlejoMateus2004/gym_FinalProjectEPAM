@@ -88,6 +88,7 @@ public class TraineeService {
     public List<Trainee> getAllTrainees() {
         return traineeRepository.findAll();
     }
+
     @PreAuthorize("hasRole('ROLE_TRAINEE')")
     @Transactional
     public void deleteTrainee(Trainee trainee) {
@@ -98,14 +99,6 @@ public class TraineeService {
     public Trainee getTraineeByUserUsername(String username){
         return traineeRepository.findTraineeByUserUsername(username);
     }
-    @PreAuthorize("hasRole('ROLE_TRAINEE')")
-    @Transactional(readOnly = true)
-    public Trainee getTraineeByUserUsernameWithTrainingParams(TraineeRecord.TraineeRequestWithTrainingParams traineeRequest) {
-        return traineeRepository.findTraineeByUserUsernameWithTrainingParams(
-                traineeRequest.trainee_username(), traineeRequest.trainingRequest().periodFrom(), traineeRequest.trainingRequest().periodTo(), traineeRequest.trainingRequest().user_name(), traineeRequest.trainingRequest().training_type()
-        );
-    }
-
 
     @PreAuthorize("hasRole('ROLE_TRAINEE')")
     @Transactional

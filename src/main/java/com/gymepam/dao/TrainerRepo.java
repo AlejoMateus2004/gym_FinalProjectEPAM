@@ -16,10 +16,10 @@ public interface TrainerRepo {
     void deleteByUserUserName(String username);
     List<Trainer> findTrainersByUserIsActiveAndTraineeListIsEmpty();
 
-    Trainer findTrainerByUserUsernameWithTrainingParams(String userName,
-                                                        LocalDate periodFrom,
-                                                        LocalDate periodTo,
-                                                        String traineeName);
+//    Trainer findTrainerByUserUsernameWithTrainingParams(String userName,
+//                                                        LocalDate periodFrom,
+//                                                        LocalDate periodTo,
+//                                                        String traineeName);
 
     Set<Trainer> findActiveTrainersNotAssignedToTrainee(String traineeUsername);
 

@@ -9,6 +9,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +36,7 @@ class generateUserNameImplTest {
         user.setPassword(genPassword.generatePassword());
         user.setIsActive(true);
 
-        listUserNames = Arrays.asList(user.getUserName());
+        listUserNames = Collections.singletonList(user.getUserName());
     }
 
     @Test

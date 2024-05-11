@@ -13,11 +13,11 @@ public interface TraineeRepo {
     List<Trainee> findAll();
     Trainee findTraineeByUserUsername(String username);
     void deleteByUserUserName(String username);
-    Trainee findTraineeByUserUsernameWithTrainingParams(String userName,
-                                                        LocalDate periodFrom,
-                                                        LocalDate periodTo,
-                                                        String trainerName,
-                                                        String trainingType);
+//    Trainee findTraineeByUserUsernameWithTrainingParams(String userName,
+//                                                        LocalDate periodFrom,
+//                                                        LocalDate periodTo,
+//                                                        String trainerName,
+//                                                        String trainingType);
 
 
 

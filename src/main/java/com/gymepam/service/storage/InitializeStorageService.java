@@ -2,6 +2,7 @@ package com.gymepam.service.storage;
 
 import com.gymepam.config.AppProperties;
 import com.gymepam.domain.entities.*;
+import com.gymepam.mapper.TrainingMapper;
 import com.gymepam.service.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +23,7 @@ public class InitializeStorageService {
 
     private static final Map<String, Map<Long, Long>> IDS_MAP = new HashMap<>();
     @Autowired private final AppProperties appProperties;
-
+    @Autowired private final TrainingMapper trainingMapper;
     @Autowired private final TraineeService traineeService;
     @Autowired private final TrainerService trainerService;
     @Autowired private final UserService userService;
@@ -163,8 +164,9 @@ public class InitializeStorageService {
             trainingData.put("trainingTypeId", IDS_MAP.get("TrainingType").get(trainingData.get("trainingTypeId")));
 
             Training training = getDataTraining(trainingData);
+
             if (training != null) {
-                trainingService.saveTraining(training);
+                trainingService.saveTraining(trainingMapper.trainingToTrainingRequest(training));
             }
         }
     }

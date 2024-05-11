@@ -62,21 +62,21 @@ public class TrainerStorageInMemory implements TrainerRepo {
 
     }
 
-    @Override
-    public Trainer findTrainerByUserUsernameWithTrainingParams(String userName, LocalDate periodFrom, LocalDate periodTo, String traineeName) {
-        List<Trainer> trainerList = new ArrayList<>(trainerMap.values());
-        Trainer trainer = trainerList.stream()
-                .filter(t -> t.getUser().getUserName().equals(userName) &&
-                        t.getTrainingList().stream()
-                                .anyMatch(tr -> (periodFrom == null || tr.getTrainingDate().isAfter(periodFrom)) &&
-                                        (periodTo == null || tr.getTrainingDate().isBefore(periodTo)) &&
-                                        (traineeName == null || tr.getTrainee().getUser().getFirstName().toLowerCase().contains(traineeName.toLowerCase())))
-                )
-                .findFirst()
-                .orElse(null);
-
-        return trainer;
-    }
+//    @Override
+//    public Trainer findTrainerByUserUsernameWithTrainingParams(String userName, LocalDate periodFrom, LocalDate periodTo, String traineeName) {
+//        List<Trainer> trainerList = new ArrayList<>(trainerMap.values());
+//        Trainer trainer = trainerList.stream()
+//                .filter(t -> t.getUser().getUserName().equals(userName) &&
+//                        t.getTrainingList().stream()
+//                                .anyMatch(tr -> (periodFrom == null || tr.getTrainingDate().isAfter(periodFrom)) &&
+//                                        (periodTo == null || tr.getTrainingDate().isBefore(periodTo)) &&
+//                                        (traineeName == null || tr.getTrainee().getUser().getFirstName().toLowerCase().contains(traineeName.toLowerCase())))
+//                )
+//                .findFirst()
+//                .orElse(null);
+//
+//        return trainer;
+//    }
 
     @Override
     public Set<Trainer> findActiveTrainersNotAssignedToTrainee(String traineeUsername) {

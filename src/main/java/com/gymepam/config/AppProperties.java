@@ -17,4 +17,6 @@ public class AppProperties {
     @Value("${initializationStorageFile.active}")
     private boolean initializeStorage;
 
+//    @Value("${application.config.training-url}")
+//    private String trainingUrl;
 }

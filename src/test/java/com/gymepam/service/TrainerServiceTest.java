@@ -79,6 +79,7 @@ class TrainerServiceTest {
         assertEquals("Al3jO123xz", result.getUser().getPassword());
         verify(trainerRepository, times(1)).save(trainer);
     }
+
     @DisplayName("Test update Trainer")
     @Test
     void testUpdateTrainer() {
@@ -98,6 +99,7 @@ class TrainerServiceTest {
         assertEquals("Cardio", result.getTrainingType().getTrainingTypeName());
         verify(trainerRepository, times(1)).save(updatedTrainer);
     }
+
     @DisplayName("Test get Trainer")
     @Test
     void getTrainer() {
@@ -110,7 +112,7 @@ class TrainerServiceTest {
     @DisplayName("Test get all Trainers")
     @Test
     void getAllTrainers() {
-        when(trainerRepository.findAll()).thenReturn(Arrays.asList(trainer));
+        when(trainerRepository.findAll()).thenReturn(Collections.singletonList(trainer));
         List<Trainer> allTrainers = trainerService.getAllTrainers();
         assertNotNull(allTrainers);
         assertEquals(trainer, allTrainers.get(0));
@@ -145,6 +147,7 @@ class TrainerServiceTest {
         assertNotNull(result);
         assertEquals(newPassword, result.getUser().getPassword());
     }
+
     @DisplayName("Test update password with incorrect data")
     @Test
     void testUpdatePasswordTrainerNotFound() {
@@ -158,6 +161,7 @@ class TrainerServiceTest {
 
         assertNull(result);
     }
+
     @DisplayName("Test update password with incorrect oldPassword")
     @Test
     void testUpdatePasswordInvalidOldPassword() {
@@ -176,7 +180,7 @@ class TrainerServiceTest {
     @DisplayName("Test, get a list of trainers who have no associations with trainees")
     @Test
     void testGetTrainerByTraineeListEmpty() {
-        when(trainerRepository.findTrainersByUserIsActiveAndTraineeListIsEmpty()).thenReturn(Arrays.asList(trainer));
+        when(trainerRepository.findTrainersByUserIsActiveAndTraineeListIsEmpty()).thenReturn(Collections.singletonList(trainer));
         List<Trainer> trainers = trainerService.getTrainerByTraineeListEmpty();
         assertNotNull(trainers);
         assertEquals(trainer, trainers.get(0));
@@ -184,35 +188,7 @@ class TrainerServiceTest {
         assertThat(trainers.get(0).getTraineeList()).isEmpty();
     }
 
-//    @DisplayName("Test get Trainer by username and/or training params")
-//    @Test
-//    void getTrainerByUserUsernameWithTrainingParams() {
-//        TrainingRecord.TrainingFilterRequest trainingRequest = new TrainingRecord.
-//                TrainingFilterRequest(LocalDate.parse("2022-01-01"),LocalDate.parse("2022-02-01"), "trainerName", "trainingTypeName");
-//
-//        TrainerRecord.TrainerRequestWithTrainingParams trainerRequest = new TrainerRecord.
-//                TrainerRequestWithTrainingParams("alejandro.mateus", trainingRequest);
-//
-//
-//
-//        when(formatDate.getLocalDate("2022-01-01")).thenReturn(LocalDate.parse("2022-01-01"));
-//        when(formatDate.getLocalDate("2022-02-01")).thenReturn(LocalDate.parse("2022-02-01"));
-//
-//        when(trainerRepository.findTrainerByUserUsernameWithTrainingParams(
-//                "alejandro.mateus",
-//                LocalDate.of(2022, 1, 1),
-//                LocalDate.of(2022, 2, 1),
-//                "trainerName"
-//        )).thenReturn(trainer);
-//
-//        Trainer resultTrainer = trainerService.getTrainerByUserUsernameWithTrainingParams(trainerRequest);
-//
-//        assertEquals(trainer, resultTrainer);
-//        verify(trainerRepository, times(1)).findTrainerByUserUsernameWithTrainingParams(
-//                "alejandro.mateus",
-//                LocalDate.of(2022, 1, 1),
-//                LocalDate.of(2022, 2, 1),
-//                "trainerName"
-//        );
-//    }
+    @Test
+    void getActiveTrainersNotAssignedToTrainee() {
+    }
 }

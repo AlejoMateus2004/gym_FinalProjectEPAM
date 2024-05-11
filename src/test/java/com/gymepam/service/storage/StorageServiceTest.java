@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -28,15 +29,12 @@ class StorageServiceTest {
     @Mock
     private TrainerService trainerService;
 
-    @Mock
-    private TrainingService trainingService;
-
     @InjectMocks
     private StorageService storageService;
 
     List<Trainee> traineeList;
     List<Trainer> trainerList;
-    List<Training> trainingList;
+
     @BeforeEach
     void setUp() {
         Trainer trainer = new Trainer();
@@ -49,7 +47,7 @@ class StorageServiceTest {
         trainer.setUser(user);
 
         TrainingType trainingType = new TrainingType();
-        trainingType.setId(new Long(1));
+        trainingType.setId(1L);
         trainingType.setTrainingTypeName("Weight Lifting");
 
         trainer.setTrainingType(trainingType);
@@ -65,18 +63,8 @@ class StorageServiceTest {
         trainee.setDateOfBirth(LocalDate.now());
         trainee.setAddress("Cra 13 #1-33");
 
-        Training training = new Training();
-        training.setTrainingType(trainingType);
-        training.setTrainee(trainee);
-        training.setTrainer(trainer);
-        training.setTrainingDate(LocalDate.parse("2022-08-06"));
-        training.setTrainingDuration(3l);
-        training.setTrainingName("Plan Three Months");
-
-        traineeList = Arrays.asList(trainee);
-        trainerList = Arrays.asList(trainer);
-        trainingList = Arrays.asList(training);
-
+        traineeList = List.of(trainee);
+        trainerList = List.of(trainer);
     }
 
 
@@ -84,17 +72,14 @@ class StorageServiceTest {
     void loadDbInMemory() {
         when(traineeService.getAllTrainees()).thenReturn(traineeList);
         when(trainerService.getAllTrainers()).thenReturn(trainerList);
-        when(trainingService.getAllTrainings()).thenReturn(trainingList);
 
         storageService.loadDbInMemory();
 
         verify(traineeService, times(1)).getAllTrainees();
         verify(trainerService, times(1)).getAllTrainers();
-        verify(trainingService, times(1)).getAllTrainings();
 
         Map<String, List<Object>> dbInMemory = storageService.getDbInMemory();
         assertEquals(traineeList, dbInMemory.get("Trainee"));
         assertEquals(trainerList, dbInMemory.get("Trainer"));
-        assertEquals(trainingList, dbInMemory.get("Training"));
     }
 }

@@ -15,10 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -84,7 +81,7 @@ class TraineeServiceTest {
     @DisplayName("Test get all Trainees")
     @Test
     void testGetAllTrainees() {
-        when(traineeRepository.findAll()).thenReturn(Arrays.asList(trainee));
+        when(traineeRepository.findAll()).thenReturn(Collections.singletonList(trainee));
         List<Trainee> allTrainees = traineeService.getAllTrainees();
         assertNotNull(allTrainees);
         assertEquals(trainee, allTrainees.get(0));
@@ -176,37 +173,4 @@ class TraineeServiceTest {
         verify(traineeRepository, times(1)).save(updatedTrainee);
     }
 
-//    @DisplayName("Test get Trainee by username and/or training params")
-//    @Test
-//    void getTraineeByUserUsernameWithTrainingParams() {
-//        TrainingRecord.TrainingFilterRequest trainingRequest = new TrainingRecord.
-//                TrainingFilterRequest(LocalDate.parse("2022-01-01"),LocalDate.parse("2022-02-01"), "trainerName", "trainingTypeName");
-//
-//        TraineeRecord.TraineeRequestWithTrainingParams traineeRequest = new TraineeRecord.
-//                TraineeRequestWithTrainingParams("alejandro.mateus", trainingRequest);
-//
-//
-//
-//        when(formatDate.getLocalDate("2022-01-01")).thenReturn(LocalDate.parse("2022-01-01"));
-//        when(formatDate.getLocalDate("2022-02-01")).thenReturn(LocalDate.parse("2022-02-01"));
-//
-//        when(traineeRepository.findTraineeByUserUsernameWithTrainingParams(
-//                "alejandro.mateus",
-//                LocalDate.of(2022, 1, 1),
-//                LocalDate.of(2022, 2, 1),
-//                "trainerName",
-//                "trainingTypeName"
-//        )).thenReturn(trainee);
-//
-//        Trainee resultTrainee = traineeService.getTraineeByUserUsernameWithTrainingParams(traineeRequest);
-//
-//        assertEquals(trainee, resultTrainee);
-//        verify(traineeRepository, times(1)).findTraineeByUserUsernameWithTrainingParams(
-//                "alejandro.mateus",
-//                LocalDate.of(2022, 1, 1),
-//                LocalDate.of(2022, 2, 1),
-//                "trainerName",
-//                "trainingTypeName"
-//        );
-//    }
 }

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -156,42 +157,45 @@ class TraineeRestControllerTest {
     }
 
     @Test
-    void getTraineeTrainingsList() throws Exception {
+    void getTraineeByTrainingParams() throws Exception {
         LocalDate periodFrom = LocalDate.parse("2024-01-01");
         LocalDate periodTo = LocalDate.now();
-        String username = "alejandro.mateus";
+        String trainerUsername = "trainer.username";
+        String traineeUsername = "trainee.username";
 
-        TraineeRecord.TraineeRequestWithTrainingParams traineeRequest =
-                new TraineeRecord.TraineeRequestWithTrainingParams(username, new TrainingRecord.TrainingFilterRequest(periodFrom, periodTo, "", ""));
+        TrainingRecord.TraineeTrainingParamsRequest traineeRequest = new TrainingRecord.TraineeTrainingParamsRequest(
+                periodFrom,
+                periodTo,
+                trainerUsername,
+                traineeUsername
+        );
 
         List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = Collections.singletonList(
                 new TrainingRecord.TraineeTrainingResponse(
-                        "1st month",
-                        LocalDate.parse("2024-01-01"),
-                        new TrainerRecord.TrainerUserResponse(
-                                new UserRecord.UserRequest(
-                                        "Alejandro",
-                                        "Mateus"
-                                )
-                        ),
-                        null
+                        1L,
+                        "TRAINING1",
+                        LocalDate.parse("2024-02-01"),
+                        trainerUsername
                 )
         );
 
-        Mockito.when(traineeFacadeService.getTraineeByUserUsernameWithTrainingParams_(traineeRequest))
-                .thenReturn(trainingsResponse);
+        when(traineeFacadeService.getTraineeByUserUsernameWithTrainingParams(traineeRequest))
+                .thenReturn(new ResponseEntity<>(trainingsResponse, HttpStatus.OK));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/trainee/trainings")
+        mockMvc.perform(MockMvcRequestBuilders.post("/trainee/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", username)
-                        .param("periodFrom", String.valueOf(periodFrom))
-                        .param("periodTo", String.valueOf(periodTo))
-                        .param("trainerName","")
-                        .param("trainingType","")
+                        .content("{\n" +
+                                "  \"periodFrom\": \"2024-01-01\",\n" +
+                                "  \"periodTo\": \"2024-05-11\",\n" +
+                                "  \"trainerUsername\": \"trainer.username\",\n" +
+                                "  \"traineeUsername\": \"trainee.username\"\n" +
+                                "}")
                         .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andExpect(jsonPath("$[0].trainingName").value("1st month"));
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1))
+                .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
+                .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
+                .andExpect(jsonPath("$[0].trainerUsername").value(trainerUsername));
     }
 
     @Test
@@ -202,20 +206,20 @@ class TraineeRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        verify(traineeFacadeService, times(1)).deleteByUserUserName(username);
+        verify(traineeFacadeService, times(1)).deleteTraineeByUserName(username);
     }
 
     @Test
     void testDeleteTraineeFailure() throws Exception {
         String username = "username";
 
-        doThrow(new RuntimeException("Simulated exception")).when(traineeFacadeService).deleteByUserUserName(username);
+        doThrow(new RuntimeException("Simulated exception")).when(traineeFacadeService).deleteTraineeByUserName(username);
 
         mockMvc.perform(delete("/trainee/{username}", username)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
 
-        verify(traineeFacadeService, times(1)).deleteByUserUserName(username);
+        verify(traineeFacadeService, times(1)).deleteTraineeByUserName(username);
     }
 
     @Test

@@ -4,10 +4,12 @@ import com.gymepam.dao.TrainerRepo;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.entities.Trainer;
 import com.gymepam.domain.entities.User;
+import com.gymepam.service.feignClients.TrainingFeignClient;
 import com.gymepam.service.util.EncryptPassword;
 import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,18 +21,17 @@ import java.util.Set;
 
 @Slf4j
 @Service
+@AllArgsConstructor
 public class TrainerService {
 
-    @Autowired
+
     private TrainerRepo trainerRepository;
-    @Autowired
+
     private ValidatePassword valPassword;
-    @Autowired
+
     private EncryptPassword encryptPass;
-    @Autowired
+
     private GenerateUserName genUserName;
-    @Autowired
-    private FormatDate formatDate;
 
     @Transactional
     public Trainer saveTrainer(Trainer trainer) {
@@ -55,6 +56,7 @@ public class TrainerService {
         }
         return temp;
     }
+
     @PreAuthorize("hasRole('ROLE_TRAINER')")
     @Transactional
     public Trainer updateTrainer(Trainer trainer) {
@@ -76,10 +78,12 @@ public class TrainerService {
         log.info("Trainer updated");
         return trainerRepository.save(temp);
     }
+
     @Transactional(readOnly = true)
     public Trainer getTrainer(Long trainerId) {
         return trainerRepository.findById(trainerId).orElse(null);
     }
+
     @PreAuthorize("hasRole('ROLE_TRAINER')")
     @Transactional(readOnly = true)
     public List<Trainer> getAllTrainers() {
@@ -108,6 +112,7 @@ public class TrainerService {
         }
         return null;
     }
+
     @PreAuthorize("hasRole('ROLE_TRAINER')")
     @Transactional(readOnly = true)
     public List<Trainer> getTrainerByTraineeListEmpty(){
@@ -119,18 +124,6 @@ public class TrainerService {
     public Set<Trainer> getActiveTrainersNotAssignedToTrainee(String username){
         return trainerRepository.findActiveTrainersNotAssignedToTrainee(username);
     }
-
-    @PreAuthorize("hasRole('ROLE_TRAINER')")
-    @Transactional(readOnly = true)
-    public Trainer getTrainerByUserUsernameWithTrainingParams(TrainerRecord.TrainerRequestWithTrainingParams trainerRequest) {
-        return trainerRepository.findTrainerByUserUsernameWithTrainingParams(
-                trainerRequest.trainer_username(),
-                trainerRequest.trainingRequest().periodFrom(),
-                trainerRequest.trainingRequest().periodTo(),
-                trainerRequest.trainingRequest().user_name()
-        );
-    }
-
 
 
 }

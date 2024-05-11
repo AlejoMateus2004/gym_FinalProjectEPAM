@@ -44,7 +44,7 @@ class TrainingTypeServiceTest {
 
         TrainingType resultTrainingType = trainingTypeService.saveTraining_Type(trainingType);
 
-        assertEquals(null, resultTrainingType);
+        assertNull(resultTrainingType);
     }
 
     @DisplayName("Test get TrainingType")
@@ -52,7 +52,7 @@ class TrainingTypeServiceTest {
     void getTraining_Type_ExistingId_ReturnsTrainingType() {
         Long trainingTypeId = 1L;
         TrainingType trainingType = new TrainingType();
-        when(trainingTypeRepository.findById(trainingTypeId)).thenReturn(java.util.Optional.ofNullable(trainingType));
+        when(trainingTypeRepository.findById(trainingTypeId)).thenReturn(java.util.Optional.of(trainingType));
 
         TrainingType resultTrainingType = trainingTypeService.getTraining_Type(trainingTypeId);
 

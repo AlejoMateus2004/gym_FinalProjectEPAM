@@ -34,11 +34,6 @@ public class TraineeRecord {
     ) {
     }
 
-    public record TraineeUserResponse(
-            UserRecord.UserRequest user
-    ) {
-    }
-
     public record TraineeTrainerList(
             @NotBlank(message = "Trainee username can't be null or empty")
             String trainee_username,
