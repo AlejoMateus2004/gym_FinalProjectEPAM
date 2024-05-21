@@ -35,7 +35,16 @@ public class TrainingService {
     }
 
     public TrainingSummary getTrainerMonthlySummary(String trainerUsername){
-        return trainingFeignClient.getTrainingSummaryByTrainerUsername(trainerUsername).getBody();
+        try {
+            var response = trainingFeignClient.getTrainingSummaryByTrainerUsername(trainerUsername);
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                return response.getBody();
+            }
+            return null;
+        }catch (Exception e) {
+            log.error("Error, trying to get Training Summary", e);
+        }
+        return new TrainingSummary(null);
     }
 
     public ResponseEntity<String> deleteTrainingById(Long trainingId) {

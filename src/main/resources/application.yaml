@@ -17,8 +17,6 @@ spring:
     config:
       enabled: false
 management:
-  server:
-    port: 9002
   endpoints:
     web:
       exposure:
@@ -32,6 +30,10 @@ management:
 #      base-path: "/manage"
 
 springdoc:
+  api-docs:
+    enabled: true
   swagger-ui:
     enabled: true
+    path: /doc/swagger-ui.html
+
   show-actuator: true

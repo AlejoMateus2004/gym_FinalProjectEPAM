@@ -7,12 +7,10 @@ import com.gymepam.domain.dto.records.TraineeRecord.TraineeResponseWithTrainers;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.service.facade.TraineeFacadeService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 @Slf4j
-@Api(tags = "Trainee Controller", value = "Operations for creating, updating, retrieving and deleting Trainees in the application")
+@Tag(name = "Trainee Controller", description = "Operations for creating, updating, retrieving and deleting Trainees in the application")
 @RestController
 @RequestMapping("/trainee")
 public class TraineeRestController {
@@ -38,7 +36,7 @@ public class TraineeRestController {
                 .description("Total of successful trainee registration").register(meterRegistry);
     }
 
-    @ApiOperation(value = "Save Trainee", notes = "Register a new Trainee in the system")
+    @Operation(summary = "Save Trainee", description = "Register a new Trainee in the system")
     @PostMapping("/public/save")
     public ResponseEntity<AuthenticationRequest> saveTrainee(@RequestBody @Validated TraineeRequest trainee){
        var response = traineeFacade.save_Trainee(trainee);
@@ -46,9 +44,7 @@ public class TraineeRestController {
         return response;
     }
 
-    @ApiOperation(value = "Update Trainee", notes = "Update an existing Trainee")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Update Trainee", description = "Update an existing Trainee")
     @PutMapping("/update")
     public ResponseEntity<TraineeResponseWithTrainers> updateTrainee(@RequestBody @Validated TraineeRecord.TraineeUpdateRequest traineeRequest){
         TraineeResponseWithTrainers traineeResponse = traineeFacade.updateTrainee_(traineeRequest);
@@ -58,9 +54,7 @@ public class TraineeRestController {
         return new ResponseEntity<>(traineeResponse,HttpStatus.ACCEPTED);
     }
 
-    @ApiOperation(value = "Get Trainee", notes = "Retrieve an existing Trainee")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Get Trainee", description = "Retrieve an existing Trainee")
     @GetMapping("/{username}")
     public ResponseEntity<TraineeResponseWithTrainers> getTrainee(@PathVariable String username){
         TraineeResponseWithTrainers traineeResponse = traineeFacade.getTraineeByUserUsername_(username);
@@ -71,9 +65,7 @@ public class TraineeRestController {
         return new ResponseEntity<>(traineeResponse, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "Update Trainee's Trainer List", notes = "Retrieve Trainee's Trainer List")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Update Trainee's Trainer List", description = "Retrieve Trainee's Trainer List")
     @PutMapping("/trainers")
     public ResponseEntity<Set<TrainerRecord.TrainerResponse>> updateTraineesTrainerList(@RequestBody @Validated TraineeRecord.TraineeTrainerList trainee){
         try {
@@ -85,18 +77,13 @@ public class TraineeRestController {
         }
     }
 
-    @ApiOperation(value = "Get Trainee Trainings List", notes = "Retrieve Trainee's Training List")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
-//    @CircuitBreaker(name = "trainingCB", fallbackMethod = "fallGetTraineeByTrainingParams")
+    @Operation(summary = "Get Trainee Trainings List", description = "Retrieve Trainee's Training List")
     @PostMapping("/trainings")
     public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeByTrainingParams(@RequestBody TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
         return traineeFacade.getTraineeByUserUsernameWithTrainingParams(traineeRequest);
     }
 
-    @ApiOperation(value = "Delete Trainee")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Delete Trainee")
     @DeleteMapping("/{username}")
     public ResponseEntity<String> deleteTrainee(@PathVariable String username){
         try {
@@ -108,17 +95,13 @@ public class TraineeRestController {
         }
     }
 
-    @ApiOperation(value = "Update Trainee Status", notes = "Activate/De-Activate Trainee")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Update Trainee Status", description = "Activate/De-Activate Trainee")
     @PatchMapping
     public ResponseEntity updateStatus(@RequestParam String username, @RequestParam boolean isActive){
         return traineeFacade.updateStatus(username, isActive);
     }
 
-    @ApiOperation(value = "Get Not Assigned Trainers On Trainee", notes = "Get Not Assigned Trainers On Active Trainee")
-    @ApiImplicitParam(name = "Authorization", value = "Authorization Token Bearer", required = true,
-            dataTypeClass = String.class, paramType = "header", example = "Bearer")
+    @Operation(summary = "Get Not Assigned Trainers On Trainee", description = "Get Not Assigned Trainers On Active Trainee")
     @GetMapping("/{username}/trainers-notAssigned")
     public ResponseEntity<Set<TrainerRecord.TrainerResponse>> getNotAssignedTrainersOnTrainee(@PathVariable String username){
         Set<TrainerRecord.TrainerResponse> trainersNotAssigned = traineeFacade.getNotAssignedTrainersByTraineeUserUsername(username);

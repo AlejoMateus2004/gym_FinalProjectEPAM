@@ -1,7 +1,8 @@
 package com.gymepam.domain.dto.records;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;

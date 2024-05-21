@@ -4,13 +4,13 @@ import com.gymepam.config.AppProperties;
 import com.gymepam.domain.entities.*;
 import com.gymepam.mapper.TrainingMapper;
 import com.gymepam.service.*;
+import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.time.LocalDate;
 import java.util.HashMap;

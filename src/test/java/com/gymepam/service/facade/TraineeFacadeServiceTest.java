@@ -74,7 +74,7 @@ class TraineeFacadeServiceTest {
 
         trainee.setUser(user);
         when(generatePassword.generatePassword()).thenReturn("generatedPassword");
-        doReturn(trainee).when( traineeFacadeService ).save_Trainee( any() );
+        doReturn(trainee).when( traineeService ).saveTrainee( any() );
         when( traineeMapper.traineeRequestToTrainee(any()) ).thenReturn(trainee);
 
         ResponseEntity<AuthenticationRequest> responseEntity = traineeFacadeService.save_Trainee(traineeRequest);
@@ -87,8 +87,8 @@ class TraineeFacadeServiceTest {
     @Test
     void save_Trainee_FailedSave_ReturnsBadRequest() {
         Trainee trainee = new Trainee();
-        when(generatePassword.generatePassword()).thenReturn("generatedPassword");
-        when(traineeService.saveTrainee(trainee)).thenReturn(null);
+        when(traineeMapper.traineeRequestToTrainee(any())).thenReturn(null);
+
 
         TraineeRecord.TraineeRequest traineeRequest = new TraineeRecord.TraineeRequest(
                 new UserRecord.UserRequest(

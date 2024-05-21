@@ -43,8 +43,14 @@ public class TraineeFacadeService{
 
     public ResponseEntity<AuthenticationRequest> save_Trainee(TraineeRecord.TraineeRequest traineeRequest) {
         Trainee trainee = traineeMapper.traineeRequestToTrainee(traineeRequest);
+        if (trainee == null) {
+            return ResponseEntity.badRequest().build();
+        }
         User user = trainee.getUser();
 
+        if (user == null) {
+            return ResponseEntity.badRequest().build();
+        }
         String password = generatePassword.generatePassword();
         user.setPassword(password);
 
@@ -52,7 +58,7 @@ public class TraineeFacadeService{
 
         Trainee temp = traineeService.saveTrainee(trainee);
         if (temp == null) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
         AuthenticationRequest newAuth = new AuthenticationRequest();
 
@@ -79,9 +85,11 @@ public class TraineeFacadeService{
         }
 
         try {
-            return trainingFeignClient.getTraineeTrainingListByTrainingParams(
-                    traineeRequest
-            );
+            var response = trainingFeignClient.getTraineeTrainingListByTrainingParams(traineeRequest);
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                return response;
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             log.error("Error fetching training microservice", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Return server error response

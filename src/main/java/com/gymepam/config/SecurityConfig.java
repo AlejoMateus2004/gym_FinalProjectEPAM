@@ -1,10 +1,13 @@
 package com.gymepam.config;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.gymepam.service.security.UserSecurityService;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,45 +15,42 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+
+import static org.springframework.security.config.Customizer.withDefaults;
+
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
+    private final UserSecurityService userDetailsService;
 
-    @Autowired
-    public SecurityConfig(JwtFilter jwtFilter) {
-        this.jwtFilter = jwtFilter;
-    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .cors().and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-                .authorizeRequests()
-                .antMatchers(
-            "/**/public/**",
-                        "/v2/api-docs/**",
-                        "/configuration/ui/**",
-                        "/swagger-resources/**",
-                        "/configuration/**",
-                        "/swagger-ui/**",
-                        "/webjars/**",
-                        "/actuator/**",
-                        "/h2-console/**")
-                .permitAll()
-                .antMatchers("/trainee/**").hasRole("TRAINEE")
-                .antMatchers("/trainer/**").hasRole("TRAINER")
-                .anyRequest()
-                .authenticated()
-                .and()
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        http.
-                headers().frameOptions().disable();
-
-        return http.build();
+         return http
+                 .csrf(AbstractHttpConfigurer::disable)
+                 .cors(Customizer.withDefaults())
+                 .authorizeHttpRequests(auth -> auth
+                    .requestMatchers("/**/public/**").permitAll()
+                    .requestMatchers("/trainee/**").hasRole("TRAINEE")
+                    .requestMatchers("/trainer/**").hasRole("TRAINER")
+                    .requestMatchers("/doc/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
+                    .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                    .anyRequest().authenticated()
+                 )
+                 .userDetailsService(userDetailsService)
+                 .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())
+                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                 .sessionManagement(session ->
+                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                 .httpBasic(Customizer.withDefaults())
+                 .build();
     }
+
+
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {

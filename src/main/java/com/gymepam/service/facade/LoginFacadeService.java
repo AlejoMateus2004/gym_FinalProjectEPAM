@@ -11,15 +11,15 @@ import com.gymepam.service.TrainerService;
 import com.gymepam.service.UserService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
+import jakarta.validation.constraints.NotBlank;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.NotBlank;
 
 @Slf4j
 @Service
@@ -57,11 +57,13 @@ public class LoginFacadeService {
     public ResponseEntity<AuthenticationResponse> getAuthenticationResponse(AuthenticationRequest authenticationRequest) {
         try {
             UsernamePasswordAuthenticationToken login = new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword());
-            authenticationManager.authenticate(login);
-
+            Authentication authentication = authenticationManager.authenticate(login);
+            if (authentication == null) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
             String userName = authenticationRequest.getUsername();
-
-            String jwt = jwtUtil.create(userName);
+            String roles = obtainUserRole(authentication);
+            String jwt = jwtUtil.create(userName, roles);
 
             AuthenticationResponse response = new AuthenticationResponse();
             response.setUsername(userName);
@@ -98,5 +100,10 @@ public class LoginFacadeService {
 
         return isUpdated ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
 
+    }
+
+
+    private String obtainUserRole(Authentication authentication) {
+        return authentication.getAuthorities().iterator().next().getAuthority();
     }
 }

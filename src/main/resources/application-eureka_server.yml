@@ -1,13 +1,15 @@
 server:
-  port: 8082
-#
-#spring:
-#  config:
-#    import: optional:configserver:http://localhost:8888
-#
-#  cloud:
-#    compatibility-verifier:
-#      enabled: false
+  port: 8080
+
+spring:
+  cloud:
+    openfeign:
+      circuitbreaker:
+        enabled: true
+        alphanumeric-ids:
+          enabled: true
+
+
 eureka:
   client:
     fetch-registry: true
@@ -18,27 +20,20 @@ eureka:
 #    instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
     hostname: localhost
 
-#application:
-#  config:
-#    training-url: http://localhost:8222/api/v1/training
+feign:
+  hystrix:
+    enabled: true
 
-resilience4j.circuitbreaker:
-  instances:
-    trainingCB:
-      registerHealthIndicator: true
-      slidingWindowSize: 10
-      permittedNumberOfCallsInHalfOpenState: 3
-      slidingWindowType: TIME_BASED
-      minimumNumberOfCalls: 4
-      waitDurationInOpenState: 5s
-      failureRateThreshold: 50
-      eventConsumerBufferSize: 10
-    allCB:
-      registerHealthIndicator: true
-      slidingWindowSize: 10
-      permittedNumberOfCallsInHalfOpenState: 3
-      slidingWindowType: TIME_BASED
-      minimumNumberOfCalls: 4
-      waitDurationInOpenState: 5s
-      failureRateThreshold: 50
-      eventConsumerBufferSize: 10
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      trainingCB:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+        slidingWindowType: TIME_BASED
+        minimumNumberOfCalls: 4
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10

@@ -1,7 +1,6 @@
 package com.gymepam.web.controllers;
 
 import com.gymepam.domain.Login.AuthenticationRequest;
-import com.gymepam.domain.dto.records.TraineeRecord;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.domain.dto.records.UserRecord;
@@ -152,7 +151,6 @@ class TrainerRestControllerTest {
 
         Mockito.when(trainerFacadeService.getTrainerByUserUsernameWithTrainingParams(trainerRequest))
                 .thenReturn(new ResponseEntity<>(trainingsResponse, HttpStatus.OK));
-
         mockMvc.perform(MockMvcRequestBuilders.post("/trainer/trainings")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\n" +
@@ -162,11 +160,13 @@ class TrainerRestControllerTest {
                                 "  \"traineeUsername\": \"trainee.username\"\n" +
                                 "}")
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].id").value(1))
-                .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
-                .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
-                .andExpect(jsonPath("$[0].trainerUsername").value(trainerUsername));
+                        .andExpect(status().isOk())
+                        .andExpect(jsonPath("$[0].id").value(1))
+                        .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
+                        .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
+                        .andExpect(jsonPath("$[0].traineeUsername").value(traineeUsername));
+
+
     }
 
 

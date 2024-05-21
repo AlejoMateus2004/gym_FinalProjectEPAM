@@ -1,7 +1,8 @@
 package com.gymepam.domain.dto.records;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 import java.util.Map;
 
@@ -30,13 +31,6 @@ public class TrainingRecord {
     ){
     }
 
-//    public record TraineeTrainingResponse(
-//            String trainingName,
-//            LocalDate trainingDate,
-//            TrainerRecord.TrainerUserResponse trainer,
-//            TrainingType trainingType
-//    ){
-//    }
     public record TraineeTrainingResponse(
             Long id,
             String trainingName,
@@ -44,13 +38,7 @@ public class TrainingRecord {
             String trainerUsername
     ){
     }
-//    public record TrainerTrainingResponse(
-//            String trainingName,
-//            LocalDate trainingDate,
-//            TraineeRecord.TraineeUserResponse trainee,
-//            TrainingType trainingType
-//    ){
-//    }
+
     public record TrainerTrainingResponse(
             Long id,
             String trainingName,
@@ -82,12 +70,4 @@ public class TrainingRecord {
             Long trainingDuration
             ){
     }
-//    public record TrainingResponse(
-//            String trainingName,
-//            LocalDate trainingDate,
-//            String traineeUsername,
-//            Long trainingDuration
-//    ){
-//    }
-
 }

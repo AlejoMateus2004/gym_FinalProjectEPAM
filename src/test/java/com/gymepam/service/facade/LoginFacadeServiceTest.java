@@ -20,7 +20,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -69,8 +74,10 @@ class LoginFacadeServiceTest {
         AuthenticationRequest request = new AuthenticationRequest();
         request.setUsername("username");
         request.setPassword("password");
-        when(authenticationManager.authenticate(any())).thenReturn(null);
-        when(jwtUtil.create("username")).thenReturn("fakeJwtToken");
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword(), Collections.singleton(new SimpleGrantedAuthority("ROLE_TRAINER")));
+        when(authenticationManager.authenticate(any())).thenReturn(authentication);
+        when(jwtUtil.create("username", "ROLE_TRAINER")).thenReturn("fakeJwtToken");
 //        when(meterRegistry.counter("sessionCounter")).thenReturn(sessionCounter);
 
         // when | Act

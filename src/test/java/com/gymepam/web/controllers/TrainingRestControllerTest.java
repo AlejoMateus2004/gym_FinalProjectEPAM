@@ -46,12 +46,11 @@ class TrainingRestControllerTest {
         when(trainingService.saveTraining(any(TrainingRecord.TrainingRequest.class)))
                 .thenReturn(new ResponseEntity("Training saved successfully", HttpStatus.OK));
 
-        MvcResult result = mockMvc.perform(post("/training")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody)
-                        .accept(MediaType.APPLICATION_JSON))
-                        .andExpect(status().isOk())
-                        .andReturn();
+        mockMvc.perform(post("/training")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
 
         verify(trainingService, times(1)).saveTraining(any(TrainingRecord.TrainingRequest.class));
     }

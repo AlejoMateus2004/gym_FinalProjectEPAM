@@ -1,14 +1,14 @@
 package com.gymepam.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.persistence.*;
-import javax.validation.Valid;
+import jakarta.persistence.*;
+
 import java.io.Serializable;
-import java.util.List;
 import java.util.Set;
 
 @Data

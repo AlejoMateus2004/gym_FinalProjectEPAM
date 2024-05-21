@@ -42,6 +42,9 @@ public class TrainingFacadeService{
         }
         TrainerResponse trainerResponse = trainerMapper.trainerToTrainerResponse(trainer);
         TrainingSummary summary = trainingService.getTrainerMonthlySummary(trainerUsername);
+        if(summary == null){
+            return ResponseEntity.notFound().build();
+        }
         TrainerDetailsTrainingSummary trainerDetailsTrainingSummary = new TrainerDetailsTrainingSummary(
                 trainerResponse,
                 summary.summary()

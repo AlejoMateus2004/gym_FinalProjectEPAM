@@ -71,9 +71,11 @@ public class TrainerFacadeService{
         }
 
         try {
-            return trainingFeignClient.getTrainerTrainingListByTrainingParams(
-                    trainerRequest
-            );
+            var response = trainingFeignClient.getTrainerTrainingListByTrainingParams(trainerRequest);
+            if (response.getStatusCode().equals(HttpStatus.OK)) {
+                return response;
+            }
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
             log.error("Error fetching training microservice", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Return server error response
