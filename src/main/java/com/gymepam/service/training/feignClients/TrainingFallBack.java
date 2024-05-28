@@ -1,4 +1,4 @@
-package com.gymepam.service.feignClients;
+package com.gymepam.service.training.feignClients;
 
 import com.gymepam.domain.dto.records.TrainingRecord;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j

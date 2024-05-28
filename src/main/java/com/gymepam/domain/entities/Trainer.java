@@ -1,12 +1,11 @@
 package com.gymepam.domain.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.Set;

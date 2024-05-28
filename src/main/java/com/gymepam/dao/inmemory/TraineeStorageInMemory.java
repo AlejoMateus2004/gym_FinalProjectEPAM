@@ -3,7 +3,6 @@ package com.gymepam.dao.inmemory;
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.entities.Trainee;
 
-import java.time.LocalDate;
 import java.util.*;
 
 
@@ -51,24 +50,6 @@ public class TraineeStorageInMemory implements TraineeRepo {
         traineeMap.remove(trainee.getTraineeId());
     }
 
-
-
-//    @Override
-//    public Trainee findTraineeByUserUsernameWithTrainingParams(String userName, LocalDate periodFrom, LocalDate periodTo, String trainerName, String trainingType) {
-//        List<Trainee> traineeList = new ArrayList<>(traineeMap.values());
-//        Trainee trainee = traineeList.stream()
-//                .filter(t -> t.getUser().getUserName().equals(userName) &&
-//                        t.getTrainingList().stream()
-//                                .anyMatch(tr -> (periodFrom == null || tr.getTrainingDate().isAfter(periodFrom)) &&
-//                                        (periodTo == null || tr.getTrainingDate().isBefore(periodTo)) &&
-//                                        (trainerName == null || tr.getTrainer().getUser().getFirstName().toLowerCase().contains(trainerName.toLowerCase())) &&
-//                                        (trainingType == null || tr.getTrainingType().getTrainingTypeName().toLowerCase().contains(trainingType.toLowerCase())))
-//                )
-//                .findFirst()
-//                .orElse(null);
-//
-//        return trainee;
-//    }
 
 
 }

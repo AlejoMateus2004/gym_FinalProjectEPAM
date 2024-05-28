@@ -1,7 +1,7 @@
 package com.gymepam.web.controllers;
 
 import com.gymepam.domain.entities.TrainingType;
-import com.gymepam.service.TrainingTypeService;
+import com.gymepam.service.trainingtype.TrainingTypeService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;

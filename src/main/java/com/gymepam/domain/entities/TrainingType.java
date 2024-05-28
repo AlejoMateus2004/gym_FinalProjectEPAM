@@ -1,8 +1,8 @@
 package com.gymepam.domain.entities;
 
+import jakarta.persistence.*;
 import lombok.Data;
 
-import jakarta.persistence.*;
 import java.io.Serializable;
 
 @Data

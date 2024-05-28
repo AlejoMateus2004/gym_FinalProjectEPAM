@@ -3,6 +3,7 @@ package com.gymepam.service;
 import com.gymepam.dao.TraineeRepo;
 import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.User;
+import com.gymepam.service.trainee.TraineeService;
 import com.gymepam.service.util.EncryptPassword;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;

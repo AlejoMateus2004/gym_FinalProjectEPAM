@@ -1,4 +1,4 @@
-package com.gymepam.service;
+package com.gymepam.service.user;
 
 import com.gymepam.dao.UserRepo;
 import com.gymepam.domain.entities.User;

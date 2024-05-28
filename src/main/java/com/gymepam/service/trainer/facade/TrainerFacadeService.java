@@ -1,18 +1,17 @@
-package com.gymepam.service.facade;
+package com.gymepam.service.trainer.facade;
 
-import com.gymepam.dao.TrainerRepo;
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
+import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.Trainer;
 import com.gymepam.domain.entities.User;
 import com.gymepam.mapper.TrainerMapper;
-import com.gymepam.service.TrainerService;
-import com.gymepam.service.feignClients.TrainingFeignClient;
-import com.gymepam.service.util.EncryptPassword;
+import com.gymepam.service.trainee.TraineeService;
+import com.gymepam.service.trainer.TrainerService;
+import com.gymepam.service.training.TrainingMicroService;
 import com.gymepam.service.util.GeneratePassword;
-import com.gymepam.service.util.GenerateUserName;
-import com.gymepam.service.util.ValidatePassword;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -29,9 +28,9 @@ public class TrainerFacadeService{
 
     private GeneratePassword generatePassword;
     private TrainerMapper trainerMapper;
-    private TrainingFeignClient trainingFeignClient;
-
+    private TrainingMicroService trainingMicroService;
     private TrainerService trainerService;
+    private TraineeService traineeService;
 
     public ResponseEntity<AuthenticationRequest> save_Trainer(TrainerRecord.TrainerRequest trainerRequest) {
         Trainer trainer = trainerMapper.trainerRequestToTrainer(trainerRequest);
@@ -65,20 +64,26 @@ public class TrainerFacadeService{
         return trainerMapper.trainerToTrainerResponseWithTrainees(trainer_);
     }
 
-    public ResponseEntity<List<TrainingRecord.TrainerTrainingResponse>> getTrainerByUserUsernameWithTrainingParams(TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
+    public ResponseEntity<GlobalModelResponse> getTrainerByUserUsernameWithTrainingParams(TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
         if (trainerRequest == null || trainerRequest.trainerUsername() == null || trainerRequest.trainerUsername().isEmpty()) {
             return ResponseEntity.badRequest().build(); // Return a bad request response if trainer username is missing
         }
 
-        try {
-            var response = trainingFeignClient.getTrainerTrainingListByTrainingParams(trainerRequest);
-            if (response.getStatusCode().equals(HttpStatus.OK)) {
-                return response;
+        Trainer trainer = trainerService.getTrainerByUserUsername(trainerRequest.trainerUsername());
+        if (trainerRequest.traineeUsername() != null && !trainerRequest.traineeUsername().isEmpty()) {
+            Trainee trainee = traineeService.getTraineeByUserUsername(trainerRequest.traineeUsername());
+            if (trainee == null) {
+                return ResponseEntity.notFound().build();
             }
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+        if (trainer == null) {
+            return ResponseEntity.notFound().build();
+        }
+        try {
+            return trainingMicroService.getTrainerTrainingListByTrainingParams(trainerRequest);
         } catch (Exception ex) {
             log.error("Error fetching training microservice", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build(); // Return server error response
+            return ResponseEntity.badRequest().build(); // Return server error response
         }
     }
 

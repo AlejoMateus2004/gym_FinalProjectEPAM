@@ -1,5 +1,8 @@
 package com.gymepam.config;
 
+import com.gymepam.service.training.TrainingMicroService;
+import com.gymepam.service.training.TrainingServiceActiveMqImpl;
+import com.gymepam.service.training.TrainingServiceFeignImpl;
 import com.gymepam.service.util.ValidatePassword;
 import com.gymepam.service.util.ValidatePasswordBCryptImpl;
 import com.gymepam.service.util.ValidatePasswordImpl;
@@ -39,6 +42,20 @@ public class ServicesConfig {
     @ConditionalOnProperty(name = "validate.password", havingValue = "nobcrypt")
     public ValidatePassword validatePassword(ValidatePasswordImpl validatePasswordImpl){
         return validatePasswordImpl;
+    }
+
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "microservice.connection", havingValue = "feign")
+    public TrainingMicroService trainingMicroServiceFeign(){
+        return new TrainingServiceFeignImpl();
+    }
+
+    @Bean
+    @Primary
+    @ConditionalOnProperty(name = "microservice.connection", havingValue = "activemq")
+    public TrainingMicroService trainingMicroServiceActiveMq(){
+        return new TrainingServiceActiveMqImpl();
     }
 
 }

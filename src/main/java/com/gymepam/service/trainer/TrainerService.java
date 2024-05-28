@@ -1,17 +1,13 @@
-package com.gymepam.service;
+package com.gymepam.service.trainer;
 
 import com.gymepam.dao.TrainerRepo;
-import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.entities.Trainer;
 import com.gymepam.domain.entities.User;
-import com.gymepam.service.feignClients.TrainingFeignClient;
 import com.gymepam.service.util.EncryptPassword;
-import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
 import com.gymepam.service.util.ValidatePassword;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

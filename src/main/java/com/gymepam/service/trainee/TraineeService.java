@@ -1,7 +1,6 @@
-package com.gymepam.service;
+package com.gymepam.service.trainee;
 
 import com.gymepam.dao.TraineeRepo;
-import com.gymepam.domain.dto.records.TraineeRecord;
 import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.User;
 import com.gymepam.service.util.EncryptPassword;

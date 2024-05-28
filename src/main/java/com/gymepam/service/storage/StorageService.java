@@ -1,12 +1,10 @@
 package com.gymepam.service.storage;
 
-import com.gymepam.service.TraineeService;
-import com.gymepam.service.TrainerService;
-import com.gymepam.service.TrainingService;
+import com.gymepam.service.trainee.TraineeService;
+import com.gymepam.service.trainer.TrainerService;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

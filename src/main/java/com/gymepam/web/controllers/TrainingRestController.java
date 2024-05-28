@@ -1,12 +1,11 @@
 package com.gymepam.web.controllers;
 
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.service.facade.TrainingFacadeService;
-import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import com.gymepam.service.training.facade.TrainingFacadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -21,25 +20,25 @@ public class TrainingRestController {
 
     @Operation(summary = "Save Training", description = "Register a new Training in the system")
     @PostMapping
-    public ResponseEntity saveTraining(@RequestBody @Validated TrainingRecord.TrainingRequest trainingRequest){
+    public ResponseEntity<GlobalModelResponse> saveTraining(@RequestBody @Validated TrainingRecord.TrainingRequest trainingRequest){
         return trainingFacadeService.saveTraining(trainingRequest);
     }
 
     @Operation(summary = "Update Training Status", description = "Update Training status to completed")
     @PutMapping("/status/{trainingId}")
-    public ResponseEntity updateTrainingStatus(@PathVariable Long trainingId){
+    public ResponseEntity<GlobalModelResponse> updateTrainingStatus(@PathVariable Long trainingId){
         return trainingFacadeService.updateTrainingStatus(trainingId);
     }
 
     @Operation(summary = "Get Training List by Trainer username", description = "Retrieve Training List by Trainer username")
     @GetMapping("/summary/trainer/{trainerUsername}")
-    public ResponseEntity<TrainingRecord.TrainerDetailsTrainingSummary> getTrainingSummaryByTrainerUsername(@PathVariable String trainerUsername){
+    public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(@PathVariable String trainerUsername){
         return trainingFacadeService.getTrainingSummaryByTrainer(trainerUsername);
     }
 
     @Operation(summary = "Delete Trainings By Trainer Username")
     @DeleteMapping("/{trainingId}")
-    public ResponseEntity<String> deleteTrainingByTrainerUsername(@PathVariable Long trainingId){
+    public ResponseEntity<GlobalModelResponse> deleteTrainingByTrainerUsername(@PathVariable Long trainingId){
         return trainingFacadeService.deleteTrainingById(trainingId);
     }
 

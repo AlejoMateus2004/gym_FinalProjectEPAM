@@ -1,7 +1,10 @@
 package com.gymepam.service;
 
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.service.feignClients.TrainingFeignClient;
+import com.gymepam.service.training.TrainingMicroService;
+import com.gymepam.service.training.TrainingServiceFeignImpl;
+import com.gymepam.service.training.feignClients.TrainingFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,10 +26,10 @@ import static org.mockito.Mockito.*;
 class TrainingServiceTest {
 
     @Mock
-    private TrainingFeignClient trainingFeignClient;
+    private TrainingFeignClient trainingFeignImpl;
 
     @InjectMocks
-    private TrainingService trainingService;
+    private TrainingMicroService trainingService =  new TrainingServiceFeignImpl();
     private TrainingRecord.TrainingRequest trainingRequest;
 
     @BeforeEach
@@ -43,7 +46,7 @@ class TrainingServiceTest {
     @Test
     void saveTraining_Success() {
         // Setup
-        when(trainingFeignClient.saveTraining(trainingRequest)).thenReturn(ResponseEntity.ok().build());
+        when(trainingFeignImpl.saveTraining(trainingRequest)).thenReturn(ResponseEntity.ok().build());
 
         // Test
         ResponseEntity responseEntity = trainingService.saveTraining(trainingRequest);
@@ -55,7 +58,7 @@ class TrainingServiceTest {
     @Test
     void saveTraining_Failure() {
         // Setup
-        when(trainingFeignClient.saveTraining(trainingRequest)).thenThrow(new RuntimeException("Feign client error"));
+        when(trainingFeignImpl.saveTraining(trainingRequest)).thenThrow(new RuntimeException("Feign client error"));
 
         // Test
         ResponseEntity responseEntity = trainingService.saveTraining(trainingRequest);
@@ -68,10 +71,10 @@ class TrainingServiceTest {
     void updateTrainingStatus_Success() {
         // Setup
         Long trainingId = 123L;
-        when(trainingFeignClient.updateTrainingStatusToCompleted(trainingId)).thenReturn(ResponseEntity.ok().build());
+        when(trainingFeignImpl.updateTrainingStatusToCompleted(trainingId)).thenReturn(ResponseEntity.ok().build());
 
         // Test
-        ResponseEntity responseEntity = trainingService.updateTrainingStatus(trainingId);
+        ResponseEntity responseEntity = trainingService.updateTrainingStatusToCompleted(trainingId);
 
         // Verify
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -81,10 +84,10 @@ class TrainingServiceTest {
     void updateTrainingStatus_Failure() {
         // Setup
         Long trainingId = 123L;
-        when(trainingFeignClient.updateTrainingStatusToCompleted(trainingId)).thenThrow(new RuntimeException("Feign client error"));
+        when(trainingFeignImpl.updateTrainingStatusToCompleted(trainingId)).thenThrow(new RuntimeException("Feign client error"));
 
         // Test
-        ResponseEntity responseEntity = trainingService.updateTrainingStatus(trainingId);
+        ResponseEntity responseEntity = trainingService.updateTrainingStatusToCompleted(trainingId);
 
         // Verify
         assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
@@ -101,57 +104,59 @@ class TrainingServiceTest {
         expectedSummary.put(2024, monthlySummary);
         TrainingRecord.TrainingSummary trainingSummary = new TrainingRecord.TrainingSummary(expectedSummary);
 
-        when(trainingFeignClient.getTrainingSummaryByTrainerUsername(any()))
+        when(trainingFeignImpl.getTrainingSummaryByTrainerUsername(any()))
                 .thenReturn(ResponseEntity.ok(trainingSummary));
 
         // Test
-        TrainingRecord.TrainingSummary summary = trainingService.getTrainerMonthlySummary(trainerUsername);
-
+        GlobalModelResponse response = trainingService.getTrainingSummaryByTrainerUsername(trainerUsername).getBody();
+        TrainingRecord.TrainingSummary responseSummary = (TrainingRecord.TrainingSummary) response.getResponse();
         // Verify
-        assertNotNull(summary);
-        assertEquals(expectedSummary, summary.summary());
+        assertNotNull(responseSummary);
+        assertEquals(expectedSummary, responseSummary.summary());
     }
 
     @Test
     void getTrainerMonthlySummary_Failure() {
         // Setup
         String trainerUsername = "example_trainer";
-        when(trainingFeignClient.getTrainingSummaryByTrainerUsername(trainerUsername))
-                .thenReturn(ResponseEntity.notFound().build());
+        when(trainingFeignImpl.getTrainingSummaryByTrainerUsername(trainerUsername))
+                .thenReturn(ResponseEntity.badRequest().build());
 
         // Test
-        TrainingRecord.TrainingSummary summary = trainingService.getTrainerMonthlySummary(trainerUsername);
+        ResponseEntity<GlobalModelResponse> response = trainingService.getTrainingSummaryByTrainerUsername(trainerUsername);
 
         // Verify
-        assertNull(summary);
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
     @Test
     void deleteTrainingById_Success() {
         // Setup
         Long trainingId = 123L;
-        when(trainingFeignClient.deleteTrainingById(trainingId))
+        when(trainingFeignImpl.deleteTrainingById(trainingId))
                 .thenReturn(ResponseEntity.ok().build());
 
         // Test
-        ResponseEntity<String> responseEntity = trainingService.deleteTrainingById(trainingId);
+        ResponseEntity<GlobalModelResponse> response = trainingService.deleteTrainingById(trainingId);
 
         // Verify
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        assertEquals("Training Deleted", responseEntity.getBody());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Training Deleted", Objects.requireNonNull(response.getBody()).getResponse());
     }
 
     @Test
     void deleteTrainingById_Failure() {
         // Setup
         Long trainingId = 123L;
-        when(trainingFeignClient.deleteTrainingById(trainingId))
-                .thenReturn(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+        GlobalModelResponse mockResponse = new GlobalModelResponse();
+        mockResponse.setMessage("Training is completed, can't be deleted");
+        when(trainingFeignImpl.deleteTrainingById(trainingId))
+                .thenReturn(ResponseEntity.badRequest().build());
 
         // Test
-        ResponseEntity<String> responseEntity = trainingService.deleteTrainingById(trainingId);
+        ResponseEntity<GlobalModelResponse> response = trainingService.deleteTrainingById(trainingId);
 
         // Verify
-        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
-        assertEquals("Training not Deleted", responseEntity.getBody());
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertEquals("Training is completed, can't be deleted", Objects.requireNonNull(response.getBody()).getMessage());
     }
 }

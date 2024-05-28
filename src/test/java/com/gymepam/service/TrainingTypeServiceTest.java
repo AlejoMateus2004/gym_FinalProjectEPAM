@@ -2,6 +2,7 @@ package com.gymepam.service;
 
 import com.gymepam.dao.TrainingTypeRepo;
 import com.gymepam.domain.entities.TrainingType;
+import com.gymepam.service.trainingtype.TrainingTypeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

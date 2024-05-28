@@ -1,12 +1,13 @@
 package com.gymepam.web.controllers;
 
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TraineeRecord;
 import com.gymepam.domain.dto.records.TraineeRecord.TraineeRequest;
 import com.gymepam.domain.dto.records.TraineeRecord.TraineeResponseWithTrainers;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.service.facade.TraineeFacadeService;
+import com.gymepam.service.trainee.facade.TraineeFacadeService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,9 +27,8 @@ import java.util.Set;
 @RequestMapping("/trainee")
 public class TraineeRestController {
 
-    TraineeFacadeService traineeFacade;
-
-    Counter trainee_registration_total;
+    private final TraineeFacadeService traineeFacade;
+    private final Counter trainee_registration_total;
 
     public TraineeRestController(TraineeFacadeService traineeFacade, MeterRegistry meterRegistry) {
         this.traineeFacade = traineeFacade;
@@ -79,7 +79,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Get Trainee Trainings List", description = "Retrieve Trainee's Training List")
     @PostMapping("/trainings")
-    public ResponseEntity<List<TrainingRecord.TraineeTrainingResponse>> getTraineeByTrainingParams(@RequestBody TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
+    public ResponseEntity<GlobalModelResponse> getTraineeByTrainingParams(@RequestBody TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
         return traineeFacade.getTraineeByUserUsernameWithTrainingParams(traineeRequest);
     }
 

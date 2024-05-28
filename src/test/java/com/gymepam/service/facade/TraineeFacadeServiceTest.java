@@ -7,9 +7,11 @@ import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.User;
 import com.gymepam.mapper.TraineeMapper;
 import com.gymepam.mapper.TrainerMapper;
-import com.gymepam.service.TraineeService;
-import com.gymepam.service.TrainerService;
-import com.gymepam.service.feignClients.TrainingFeignClient;
+import com.gymepam.service.trainee.TraineeService;
+import com.gymepam.service.trainee.facade.TraineeFacadeService;
+import com.gymepam.service.trainer.TrainerService;
+import com.gymepam.service.training.TrainingMicroService;
+import com.gymepam.service.training.feignClients.TrainingFeignClient;
 import com.gymepam.service.util.GeneratePasswordImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -45,7 +48,7 @@ class TraineeFacadeServiceTest {
     TraineeService traineeService;
 
     @Mock
-    TrainingFeignClient trainingFeignClient;
+    TrainingMicroService trainingMicroService;
 
     @InjectMocks
     private TraineeFacadeService traineeFacadeService;

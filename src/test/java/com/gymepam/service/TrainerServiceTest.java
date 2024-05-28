@@ -1,13 +1,10 @@
 package com.gymepam.service;
 
 import com.gymepam.dao.TrainerRepo;
-import com.gymepam.domain.dto.records.TraineeRecord;
-import com.gymepam.domain.dto.records.TrainerRecord;
-import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.Trainer;
 import com.gymepam.domain.entities.TrainingType;
 import com.gymepam.domain.entities.User;
+import com.gymepam.service.trainer.TrainerService;
 import com.gymepam.service.util.EncryptPassword;
 import com.gymepam.service.util.FormatDate;
 import com.gymepam.service.util.GenerateUserName;
@@ -20,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
 import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;

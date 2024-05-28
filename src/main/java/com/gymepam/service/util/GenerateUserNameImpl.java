@@ -1,7 +1,7 @@
 package com.gymepam.service.util;
 
 import com.gymepam.domain.entities.User;
-import com.gymepam.service.UserService;
+import com.gymepam.service.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

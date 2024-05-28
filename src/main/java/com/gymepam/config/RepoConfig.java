@@ -1,7 +1,10 @@
 package com.gymepam.config;
 
 import com.gymepam.dao.*;
-import com.gymepam.dao.inmemory.*;
+import com.gymepam.dao.inmemory.TraineeStorageInMemory;
+import com.gymepam.dao.inmemory.TrainerStorageInMemory;
+import com.gymepam.dao.inmemory.TrainingTypeStorageInMemory;
+import com.gymepam.dao.inmemory.UserStorageInMemory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

@@ -5,9 +5,9 @@ import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.Login.AuthenticationResponse;
 import com.gymepam.domain.entities.Trainee;
 import com.gymepam.domain.entities.Trainer;
-import com.gymepam.service.TraineeService;
-import com.gymepam.service.TrainerService;
-import com.gymepam.service.UserService;
+import com.gymepam.service.trainee.TraineeService;
+import com.gymepam.service.trainer.TrainerService;
+import com.gymepam.service.user.UserService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
@@ -24,7 +24,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Objects;
 

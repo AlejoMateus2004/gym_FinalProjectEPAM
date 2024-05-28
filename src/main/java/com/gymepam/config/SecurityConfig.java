@@ -5,20 +5,16 @@ import com.gymepam.service.security.UserSecurityService;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -34,12 +30,12 @@ public class SecurityConfig {
                  .csrf(AbstractHttpConfigurer::disable)
                  .cors(Customizer.withDefaults())
                  .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/**/public/**").permitAll()
-                    .requestMatchers("/trainee/**").hasRole("TRAINEE")
-                    .requestMatchers("/trainer/**").hasRole("TRAINER")
-                    .requestMatchers("/doc/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
-                    .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
-                    .anyRequest().authenticated()
+                        .requestMatchers("/**/public/**").permitAll()
+                        .requestMatchers("/trainee/**").hasRole("TRAINEE")
+                        .requestMatchers("/trainer/**").hasRole("TRAINER")
+                        .requestMatchers("/doc/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html", "/webjars/**", "/swagger-resources/**").permitAll()
+                        .requestMatchers(AntPathRequestMatcher.antMatcher("/h2-console/**")).permitAll()
+                        .anyRequest().authenticated()
                  )
                  .userDetailsService(userDetailsService)
                  .headers(headers -> headers.frameOptions(Customizer.withDefaults()).disable())

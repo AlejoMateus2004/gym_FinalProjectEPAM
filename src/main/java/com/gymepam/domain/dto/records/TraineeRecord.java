@@ -3,6 +3,7 @@ package com.gymepam.domain.dto.records;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -13,14 +14,14 @@ public class TraineeRecord {
             UserRecord.UserRequest user,
             LocalDate dateOfBirth,
             String address
-    ) {
+    ) implements Serializable {
     }
 
     public record TraineeUpdateRequest(
             UserRecord.UserComplete user,
             LocalDate dateOfBirth,
             String address
-    ) {
+    ) implements Serializable {
     }
 
     public record TraineeResponseWithTrainers(
@@ -28,7 +29,7 @@ public class TraineeRecord {
             LocalDate dateOfBirth,
             String address,
             Set<TrainerRecord.TrainerResponse> trainerList
-            ){
+    )implements Serializable{
     }
     public record TraineeResponse(
             UserRecord.UserComplete user
@@ -40,7 +41,7 @@ public class TraineeRecord {
             String trainee_username,
             @NotEmpty(message = "List of trainer usernames can't be null or empty")
             Set<String> trainerUsernames
-    ){
+    )implements Serializable{
     }
 
     public record TraineeRequestWithTrainingParams(
@@ -51,6 +52,6 @@ public class TraineeRecord {
     }
     public record TraineeResponseWithTrainings(
             List<TrainingRecord.TraineeTrainingResponse> trainingList
-    ){
+    )implements Serializable{
     }
 }

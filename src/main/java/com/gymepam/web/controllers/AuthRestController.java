@@ -5,7 +5,6 @@ import com.gymepam.domain.Login.AuthenticationResponse;
 import com.gymepam.service.facade.LoginFacadeService;
 import com.gymepam.service.facade.LoginFacadeService.ChangeLoginRequest;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,12 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthRestController {
 
-    LoginFacadeService loginFacadeService;
-
+    private LoginFacadeService loginFacadeService;
 
     @Operation(summary = "Login", description = "Log in to the systems")
     @PostMapping("/public/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Validated AuthenticationRequest authenticationRequest) {
+
         return loginFacadeService.getAuthenticationResponse(authenticationRequest);
 
     }

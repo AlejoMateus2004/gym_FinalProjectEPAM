@@ -1,10 +1,11 @@
 package com.gymepam.web.controllers;
 
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TrainerRecord;
 import com.gymepam.domain.dto.records.TrainerRecord.TrainerResponseWithTrainees;
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.service.facade.TrainerFacadeService;
+import com.gymepam.service.trainer.facade.TrainerFacadeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
@@ -52,7 +53,7 @@ public class TrainerRestController {
 
     @Operation(summary = "Get Trainer Trainings List", description = "Retrieve Trainer's Training List")
     @PostMapping("/trainings")
-    public ResponseEntity<List<TrainingRecord.TrainerTrainingResponse>> getTrainerByTrainingParams(@RequestBody TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
+    public ResponseEntity<GlobalModelResponse> getTrainerByTrainingParams(@RequestBody TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
         return trainerFacade.getTrainerByUserUsernameWithTrainingParams(trainerRequest);
     }
 

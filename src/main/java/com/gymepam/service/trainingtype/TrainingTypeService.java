@@ -1,4 +1,4 @@
-package com.gymepam.service;
+package com.gymepam.service.trainingtype;
 
 import com.gymepam.dao.TrainingTypeRepo;
 import com.gymepam.domain.entities.TrainingType;

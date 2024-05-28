@@ -3,7 +3,11 @@ package com.gymepam.service.storage;
 import com.gymepam.config.AppProperties;
 import com.gymepam.domain.entities.*;
 import com.gymepam.mapper.TrainingMapper;
-import com.gymepam.service.*;
+import com.gymepam.service.trainee.TraineeService;
+import com.gymepam.service.trainer.TrainerService;
+import com.gymepam.service.training.TrainingMicroService;
+import com.gymepam.service.trainingtype.TrainingTypeService;
+import com.gymepam.service.user.UserService;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +31,7 @@ public class InitializeStorageService {
     @Autowired private final TraineeService traineeService;
     @Autowired private final TrainerService trainerService;
     @Autowired private final UserService userService;
-    @Autowired private final TrainingService trainingService;
+    @Autowired private final TrainingMicroService trainingService;
     @Autowired private final TrainingTypeService trainingTypeService;
 
     @PostConstruct

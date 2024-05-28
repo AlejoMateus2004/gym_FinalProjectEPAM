@@ -1,7 +1,7 @@
 package com.gymepam.web.controllers;
 
 import com.gymepam.domain.entities.TrainingType;
-import com.gymepam.service.TrainingTypeService;
+import com.gymepam.service.trainingtype.TrainingTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
