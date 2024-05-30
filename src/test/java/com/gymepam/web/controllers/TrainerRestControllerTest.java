@@ -2,7 +2,6 @@ package com.gymepam.web.controllers;
 
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TrainerRecord;
-import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.domain.dto.records.UserRecord;
 import com.gymepam.domain.entities.TrainingType;
 import com.gymepam.service.trainer.facade.TrainerFacadeService;
@@ -13,17 +12,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -47,15 +42,16 @@ class TrainerRestControllerTest {
         authenticationRequest.setUsername("username");
         authenticationRequest.setPassword("password");
 
-        String requestBody = "{\n" +
-                "  \"user\": {\n" +
-                "    \"firstName\": \"Alejandro\",\n" +
-                "    \"lastName\": \"Mateus\"\n" +
-                "  },\n" +
-                "  \"trainingType\": {\n" +
-                "    \"id\": 1\n" +
-                "  }\n" +
-                "}";
+        String requestBody = """
+                {
+                  "user": {
+                    "firstName": "Alejandro",
+                    "lastName": "Mateus"
+                  },
+                  "trainingType": {
+                    "id": 1
+                  }
+                }""";
 
         Mockito.when(trainerFacadeService.save_Trainer(Mockito.any(TrainerRecord.TrainerRequest.class)))
                 .thenReturn(ResponseEntity.ok(authenticationRequest));
@@ -83,17 +79,18 @@ class TrainerRestControllerTest {
 
                 ));
 
-        String requestBody = "{\n" +
-                "  \"user\": {\n" +
-                "    \"firstName\": \"Alejandro A\",\n" +
-                "    \"lastName\": \"Mateus\",\n" +
-                "    \"userName\": \"alejandro.mateus\",\n" +
-                "    \"isActive\": true\n" +
-                "  },\n" +
-                "  \"trainingType\": {\n" +
-                "    \"id\": 1\n" +
-                "  }\n" +
-                "}";
+        String requestBody = """
+                {
+                  "user": {
+                    "firstName": "Alejandro A",
+                    "lastName": "Mateus",
+                    "userName": "alejandro.mateus",
+                    "isActive": true
+                  },
+                  "trainingType": {
+                    "id": 1
+                  }
+                }""";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/trainer/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -165,8 +162,6 @@ class TrainerRestControllerTest {
 //                        .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
 //                        .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
 //                        .andExpect(jsonPath("$[0].traineeUsername").value(traineeUsername));
-//
-//
 //    }
 
 

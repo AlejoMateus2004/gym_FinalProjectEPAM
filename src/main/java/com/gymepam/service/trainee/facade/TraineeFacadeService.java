@@ -20,7 +20,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,7 +74,6 @@ public class TraineeFacadeService{
     }
 
     public TraineeRecord.TraineeResponseWithTrainers updateTrainee_(TraineeRecord.TraineeUpdateRequest traineeRequest) {
-
         Trainee trainee = traineeService.updateTrainee(traineeMapper.traineeUpdateRequestToTrainee(traineeRequest));
         return traineeMapper.traineeToTraineeResponseWithTrainers(trainee);
     }

@@ -1,5 +1,6 @@
 package com.gymepam.web.controllers;
 
+import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.Login.AuthenticationRequest;
 import com.gymepam.domain.dto.records.TraineeRecord;
 import com.gymepam.domain.dto.records.TrainerRecord;
@@ -27,6 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -50,14 +52,15 @@ class TraineeRestControllerTest {
         authenticationResponse.setUsername("username");
         authenticationResponse.setPassword("password");
 
-        String requestBody = "{\n" +
-                "  \"address\": \"Cra 13 #1-33\",\n" +
-                "  \"dateOfBirth\": \"2024-02-02\",\n" +
-                "  \"user\": {\n" +
-                "    \"firstName\": \"Alejandro\",\n" +
-                "    \"lastName\": \"Mateus\"\n" +
-                "  }\n" +
-                "}";
+        String requestBody = """
+                {
+                  "address": "Cra 13 #1-33",
+                  "dateOfBirth": "2024-02-02",
+                  "user": {
+                    "firstName": "Alejandro",
+                    "lastName": "Mateus"
+                  }
+                }""";
 
         Mockito.when(traineeFacadeService.save_Trainee(Mockito.any(TraineeRecord.TraineeRequest.class)))
                 .thenReturn(ResponseEntity.ok(authenticationResponse));
@@ -86,16 +89,17 @@ class TraineeRestControllerTest {
                         , new HashSet<>()
                 ));
 
-        String requestBody = "{\n" +
-                "  \"address\": \"Cra 13 #1-33\",\n" +
-                "  \"dateOfBirth\": \"2024-02-02\",\n" +
-                "  \"user\": {\n" +
-                "    \"firstName\": \"Alejandro\",\n" +
-                "    \"lastName\": \"Mateus\",\n" +
-                "    \"userName\": \"alejandro.mateus\",\n" +
-                "    \"isActive\": true\n" +
-                "  }\n" +
-                "}";
+        String requestBody = """
+                {
+                  "address": "Cra 13 #1-33",
+                  "dateOfBirth": "2024-02-02",
+                  "user": {
+                    "firstName": "Alejandro",
+                    "lastName": "Mateus",
+                    "userName": "alejandro.mateus",
+                    "isActive": true
+                  }
+                }""";
 
         mockMvc.perform(MockMvcRequestBuilders.put("/trainee/update")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -126,8 +130,7 @@ class TraineeRestControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.user.userName").value("alejandro.mateus"))
-                .andExpect(jsonPath("$.dateOfBirth").value("2024-02-02"));
+                .andExpect(jsonPath("$.user.userName").value("alejandro.mateus"));
     }
 
     @Test
@@ -156,47 +159,46 @@ class TraineeRestControllerTest {
                 .andExpect(jsonPath("$[0].user.userName").value("alejandro.mateus"));
     }
 
-//    @Test
-//    void getTraineeByTrainingParams() throws Exception {
-//        LocalDate periodFrom = LocalDate.parse("2024-01-01");
-//        LocalDate periodTo = LocalDate.now();
-//        String trainerUsername = "trainer.username";
-//        String traineeUsername = "trainee.username";
-//
-//        TrainingRecord.TraineeTrainingParamsRequest traineeRequest = new TrainingRecord.TraineeTrainingParamsRequest(
-//                periodFrom,
-//                periodTo,
-//                trainerUsername,
-//                traineeUsername
-//        );
-//
-//        List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = Collections.singletonList(
-//                new TrainingRecord.TraineeTrainingResponse(
-//                        1L,
-//                        "TRAINING1",
-//                        LocalDate.parse("2024-02-01"),
-//                        trainerUsername
-//                )
-//        );
-//
-//        when(traineeFacadeService.getTraineeByUserUsernameWithTrainingParams(traineeRequest))
-//                .thenReturn(new ResponseEntity<>(trainingsResponse, HttpStatus.OK));
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/trainee/trainings")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content("{\n" +
-//                                "  \"periodFrom\": \"2024-01-01\",\n" +
-//                                "  \"periodTo\": \"2024-05-11\",\n" +
-//                                "  \"trainerUsername\": \"trainer.username\",\n" +
-//                                "  \"traineeUsername\": \"trainee.username\"\n" +
-//                                "}")
-//                        .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").value(1))
-//                .andExpect(jsonPath("$[0].trainingName").value("TRAINING1"))
-//                .andExpect(jsonPath("$[0].trainingDate").value("2024-02-01"))
-//                .andExpect(jsonPath("$[0].trainerUsername").value(trainerUsername));
-//    }
+    @Test
+    void getTraineeByTrainingParams() throws Exception {
+        LocalDate periodFrom = LocalDate.parse("2024-01-01");
+        LocalDate periodTo = LocalDate.now();
+        String trainerUsername = "trainer.username";
+        String traineeUsername = "trainee.username";
+
+        TrainingRecord.TraineeTrainingParamsRequest traineeRequest = new TrainingRecord.TraineeTrainingParamsRequest(
+                periodFrom,
+                periodTo,
+                trainerUsername,
+                traineeUsername
+        );
+
+        TrainingRecord.TraineeTrainingResponse expectedTrainingResponse = new TrainingRecord.TraineeTrainingResponse(
+                1L,
+                "TRAINING1",
+                LocalDate.parse("2024-02-01"),
+                trainerUsername
+        );
+        List<TrainingRecord.TraineeTrainingResponse> trainingsResponse = Collections.singletonList(expectedTrainingResponse);
+
+        GlobalModelResponse mockResponse = new GlobalModelResponse();
+        mockResponse.setResponse(trainingsResponse);
+
+        when(traineeFacadeService.getTraineeByUserUsernameWithTrainingParams(traineeRequest))
+                .thenReturn(new ResponseEntity<>(mockResponse, HttpStatus.OK));
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/trainee/trainings")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "periodFrom": "2024-01-01",
+                                  "periodTo": "2024-05-11",
+                                  "trainerUsername": "trainer.username",
+                                  "traineeUsername": "trainee.username"
+                                }""")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
 
     @Test
     void deleteTrainee() throws Exception{

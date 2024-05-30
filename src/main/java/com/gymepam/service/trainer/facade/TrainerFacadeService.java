@@ -18,8 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -34,6 +32,9 @@ public class TrainerFacadeService{
 
     public ResponseEntity<AuthenticationRequest> save_Trainer(TrainerRecord.TrainerRequest trainerRequest) {
         Trainer trainer = trainerMapper.trainerRequestToTrainer(trainerRequest);
+        if (trainer == null) {
+            return ResponseEntity.badRequest().build();
+        }
         User user = trainer.getUser();
 
         String password = generatePassword.generatePassword();
@@ -86,7 +87,6 @@ public class TrainerFacadeService{
             return ResponseEntity.badRequest().build(); // Return server error response
         }
     }
-
 
     public ResponseEntity updateStatus(String username, boolean isActive) {
         Trainer trainer = trainerService.getTrainerByUserUsername(username);
