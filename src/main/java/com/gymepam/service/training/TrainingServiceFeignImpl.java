@@ -2,7 +2,7 @@ package com.gymepam.service.training;
 
 import com.gymepam.config.GlobalModelResponse;
 import com.gymepam.domain.dto.records.TrainingRecord;
-import com.gymepam.domain.dto.records.TrainingRecord.TrainingRequest;
+import com.gymepam.domain.dto.records.TrainingRecord.TrainingMicroserviceRequest;
 import com.gymepam.domain.dto.records.TrainingRecord.TrainingSummary;
 import com.gymepam.service.training.feignClients.TrainingFeignClient;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +23,7 @@ public class TrainingServiceFeignImpl implements TrainingMicroService{
 
 
     @Override
-    public ResponseEntity<GlobalModelResponse> saveTraining(TrainingRequest trainingRequest) {
+    public ResponseEntity<GlobalModelResponse> saveTraining(TrainingMicroserviceRequest trainingRequest) {
         GlobalModelResponse response = new GlobalModelResponse();
         try{
             trainingFeignClient.saveTraining(trainingRequest);

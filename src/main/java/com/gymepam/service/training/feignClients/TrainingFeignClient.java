@@ -13,7 +13,7 @@ import java.util.List;
 public interface TrainingFeignClient {
 
     @PostMapping
-    ResponseEntity saveTraining(@RequestBody @Validated TrainingRecord.TrainingRequest trainingRequest);
+    ResponseEntity saveTraining(@RequestBody @Validated TrainingRecord.TrainingMicroserviceRequest trainingRequest);
 
     @PutMapping("/status/{trainingId}")
     ResponseEntity updateTrainingStatusToCompleted(@PathVariable Long trainingId);

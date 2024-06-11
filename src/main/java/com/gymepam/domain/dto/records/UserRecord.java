@@ -18,7 +18,7 @@ public class UserRecord {
             String firstName,
             @NotBlank(message = "Lastname can't be null or empty")
             String lastName,
-            @NotNull(message = "Firstname can't be null or empty")
+            @NotNull(message = "Status can't be null or empty")
             boolean isActive,
             @NotBlank(message = "Username can't be null or empty")
             String userName

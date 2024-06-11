@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class TrainingFallBack implements TrainingFeignClient {
     @Override
-    public ResponseEntity saveTraining(TrainingRecord.TrainingRequest trainingRequest) {
+    public ResponseEntity saveTraining(TrainingRecord.TrainingMicroserviceRequest trainingRequest) {
         log.error("saveTraining() service is not working");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }

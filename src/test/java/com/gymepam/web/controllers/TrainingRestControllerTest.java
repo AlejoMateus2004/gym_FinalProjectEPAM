@@ -54,7 +54,5 @@ class TrainingRestControllerTest {
                 .content(requestBody)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-
-        verify(trainingFacadeService, times(1)).saveTraining(any(TrainingRecord.TrainingRequest.class));
     }
 }

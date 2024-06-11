@@ -30,12 +30,15 @@ class TrainingServiceTest {
 
     @InjectMocks
     private TrainingMicroService trainingService =  new TrainingServiceFeignImpl();
-    private TrainingRecord.TrainingRequest trainingRequest;
+    private TrainingRecord.TrainingMicroserviceRequest trainingRequest;
 
     @BeforeEach
     void setUp() {
-        trainingRequest = new TrainingRecord.TrainingRequest(
+        trainingRequest = new TrainingRecord.TrainingMicroserviceRequest(
+                "Trainer",
+                "Username",
                 "trainee.username",
+                true,
                 "trainer.username",
                 "TRAININIG1",
                 LocalDate.parse("2024-05-11"),
@@ -96,23 +99,30 @@ class TrainingServiceTest {
     @Test
     void getTrainerMonthlySummary_Success() {
         // Setup
-        String trainerUsername = "example_trainer";
+        String trainerUsername = "trainer.username";
 
-        Map<Integer, Map<String, Long>> expectedSummary = new HashMap<>();
-        Map<String, Long> monthlySummary = new HashMap<>();
-        monthlySummary.put("JUNE", 1L);
-        expectedSummary.put(2024, monthlySummary);
-        TrainingRecord.TrainingSummary trainingSummary = new TrainingRecord.TrainingSummary(expectedSummary);
+        Map<Integer, Map<String, Long>> trainerSummaryMap = new HashMap<>();
+        Map<String, Long> monthDurationMap = new HashMap<>();
+        monthDurationMap.put("AUGUST", 3L);
+        trainerSummaryMap.put(2022, monthDurationMap);
+        TrainingRecord.TrainingSummary trainerSummary = new TrainingRecord.TrainingSummary(
+                "trainer.username",
+                "Trainer",
+                "Username",
+                true,
+                trainerSummaryMap
+        );
 
         when(trainingFeignImpl.getTrainingSummaryByTrainerUsername(any()))
-                .thenReturn(ResponseEntity.ok(trainingSummary));
+                .thenReturn(ResponseEntity.ok(trainerSummary));
 
         // Test
         GlobalModelResponse response = trainingService.getTrainingSummaryByTrainerUsername(trainerUsername).getBody();
+        assertNotNull(response);
         TrainingRecord.TrainingSummary responseSummary = (TrainingRecord.TrainingSummary) response.getResponse();
         // Verify
         assertNotNull(responseSummary);
-        assertEquals(expectedSummary, responseSummary.summary());
+        assertEquals(trainerSummary, responseSummary);
     }
 
     @Test

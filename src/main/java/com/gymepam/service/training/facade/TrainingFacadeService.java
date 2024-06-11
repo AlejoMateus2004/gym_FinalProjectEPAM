@@ -38,29 +38,26 @@ public class TrainingFacadeService{
             response.setMessage("The Trainee or the Trainer does not exist!");
             return ResponseEntity.badRequest().body(response);
         }
-        response.setResponse(trainingService.saveTraining(trainingRequest));
+        TrainingRecord.TrainingMicroserviceRequest trainingMicroserviceRequest = new TrainingRecord.TrainingMicroserviceRequest(
+                trainer.getUser().getFirstName(),
+                trainer.getUser().getLastName(),
+                trainer.getUser().getUserName(),
+                trainer.getUser().getIsActive(),
+                trainee.getUser().getUserName(),
+                trainingRequest.trainingName(),
+                trainingRequest.trainingDate(),
+                trainingRequest.trainingDuration()
+        );
+        response.setResponse(trainingService.saveTraining(trainingMicroserviceRequest));
         return ResponseEntity.ok(response);
     }
 
     public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainer(String trainerUsername) {
-        ResponseEntity<GlobalModelResponse> response = null;
         Trainer trainer = trainerService.getTrainerByUserUsername(trainerUsername);
         if (trainer == null) {
             return ResponseEntity.notFound().build();
         }
-        TrainerResponse trainerResponse = trainerMapper.trainerToTrainerResponse(trainer);
-        response = trainingService.getTrainingSummaryByTrainerUsername(trainerUsername);
-        GlobalModelResponse globalModelResponse = response.getBody();
-        TrainingSummary summary = (TrainingSummary) Objects.requireNonNull(globalModelResponse).getResponse();
-        if (summary == null) {
-            return ResponseEntity.notFound().build();
-        }
-        TrainerDetailsTrainingSummary trainerDetailsTrainingSummary = new TrainerDetailsTrainingSummary(
-                trainerResponse,
-                summary.summary()
-        );
-        globalModelResponse.setResponse(trainerDetailsTrainingSummary);
-        return ResponseEntity.ok(globalModelResponse);
+        return trainingService.getTrainingSummaryByTrainerUsername(trainerUsername);
     }
 
     public ResponseEntity<GlobalModelResponse> deleteTrainingById(Long trainingId) {

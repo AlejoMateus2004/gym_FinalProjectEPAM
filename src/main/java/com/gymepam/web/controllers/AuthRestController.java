@@ -22,7 +22,6 @@ public class AuthRestController {
     @Operation(summary = "Login", description = "Log in to the systems")
     @PostMapping("/public/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody @Validated AuthenticationRequest authenticationRequest) {
-
         return loginFacadeService.getAuthenticationResponse(authenticationRequest);
 
     }
