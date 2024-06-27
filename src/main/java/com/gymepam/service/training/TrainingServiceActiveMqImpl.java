@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Slf4j
-@Service
 public class TrainingServiceActiveMqImpl implements TrainingMicroService{
 
     @Autowired

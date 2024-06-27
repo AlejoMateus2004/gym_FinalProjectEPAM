@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
 public interface UserRepository extends JpaRepository<User, Long>, UserRepo {
     @Query("SELECT u.userName FROM User u")
     List<String> getAllUsernames();

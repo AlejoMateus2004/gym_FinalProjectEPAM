@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Set;
 
-@Repository
 public interface TrainerRepository extends JpaRepository<Trainer, Long>, TrainerRepo {
     void deleteByUserUserName(@Param("username") String username);
 

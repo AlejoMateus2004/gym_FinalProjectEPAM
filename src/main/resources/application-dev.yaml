@@ -35,7 +35,7 @@ spring:
 # File path for storage initialization
 initializationStorageFile:
   path: src/main/resources/static/InitialGymData.xlsx
-  active: true
+  active: false
 
 validate:
   password: bcrypt
