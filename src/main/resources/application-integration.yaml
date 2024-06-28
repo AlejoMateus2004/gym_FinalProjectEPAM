@@ -1,0 +1,13 @@
+server:
+  port: 8080
+
+eureka:
+  client:
+    enabled: false
+feign:
+  client:
+    enabled: true
+
+microservice:
+  integration: enabled
+  connection: feign

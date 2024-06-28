@@ -4,9 +4,11 @@ import feign.RequestInterceptor;
 import feign.RequestTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Slf4j
+@ConditionalOnProperty(name = "feign.client.enabled", havingValue = "true")
 @Component
 public class FeignClientInterceptor implements RequestInterceptor {
 

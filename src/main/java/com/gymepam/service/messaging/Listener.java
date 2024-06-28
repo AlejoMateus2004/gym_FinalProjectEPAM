@@ -5,6 +5,7 @@ import com.gymepam.service.training.TrainingInMemoryStorage;
 import jakarta.jms.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Component
+@ConditionalOnProperty(name = "microservice.connection", havingValue = "activemq")
 public class Listener {
     @Autowired
     private MessageConverter messageConverter;

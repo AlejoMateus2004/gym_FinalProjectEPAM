@@ -5,6 +5,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import jakarta.jms.ConnectionFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.EnableJms;
@@ -15,6 +16,7 @@ import org.springframework.jms.support.converter.MessageType;
 
 @Slf4j
 @Configuration
+@ConditionalOnProperty(name = "microservice.connection", havingValue = "activemq")
 @EnableJms
 public class JmsConfig {
 
