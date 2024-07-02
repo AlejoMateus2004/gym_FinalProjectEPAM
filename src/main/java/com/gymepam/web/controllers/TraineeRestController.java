@@ -18,7 +18,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Slf4j
@@ -56,7 +55,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Get Trainee", description = "Retrieve an existing Trainee")
     @GetMapping("/{username}")
-    public ResponseEntity<TraineeResponseWithTrainers> getTrainee(@PathVariable String username){
+    public ResponseEntity<TraineeResponseWithTrainers> getTrainee(@PathVariable(required = true) String username){
         TraineeResponseWithTrainers traineeResponse = traineeFacade.getTraineeByUserUsername_(username);
         if (traineeResponse == null) {
             return ResponseEntity.badRequest().build();
@@ -103,7 +102,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Get Not Assigned Trainers On Trainee", description = "Get Not Assigned Trainers On Active Trainee")
     @GetMapping("/{username}/trainers-notAssigned")
-    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> getNotAssignedTrainersOnTrainee(@PathVariable String username){
+    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> getNotAssignedTrainersOnTrainee(@PathVariable(required = true) String username){
         Set<TrainerRecord.TrainerResponse> trainersNotAssigned = traineeFacade.getNotAssignedTrainersByTraineeUserUsername(username);
         if (trainersNotAssigned == null) {
             return ResponseEntity.notFound().build();

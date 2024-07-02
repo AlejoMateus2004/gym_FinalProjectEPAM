@@ -32,7 +32,7 @@ public class TrainingRestController {
 
     @Operation(summary = "Get Training List by Trainer username", description = "Retrieve Training List by Trainer username")
     @GetMapping("/summary/trainer/{trainerUsername}")
-    public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(@PathVariable String trainerUsername){
+    public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(@PathVariable(required = true) String trainerUsername){
         return trainingFacadeService.getTrainingSummaryByTrainer(trainerUsername);
     }
 

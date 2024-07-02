@@ -6,8 +6,8 @@ eureka:
     enabled: false
 feign:
   client:
-    enabled: true
+    enabled: false
 
 microservice:
-  integration: enabled
+  integration: disabled
   connection: feign

@@ -4,7 +4,7 @@ app:
   repository: jpa
 spring:
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/production_db
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:${MYSQL_PORT:3306}/${DB_NAME:db_gym_main_service}
     username: ${MYSQL_USER:prod}
     password: ${MYSQL_PASSWORD:pass}
     driver-class-name: com.mysql.cj.jdbc.Driver

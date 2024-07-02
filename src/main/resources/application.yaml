@@ -1,7 +1,7 @@
 spring:
   profiles:
 #    active: dev, eureka_server, activemq
-    active: dev, integration
+    active: prod, integration
   application:
     name: users-gym-service
   servlet:
@@ -13,8 +13,6 @@ spring:
       matching-strategy : ANT_PATH_MATCHER
 
   cloud:
-    loadbalancer:
-      enabled: false
     config:
       enabled: false
 management:

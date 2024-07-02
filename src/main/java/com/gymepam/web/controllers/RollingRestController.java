@@ -20,7 +20,7 @@ public class RollingRestController {
     private TrainingInMemoryStorage trainingInMemoryStorage;
 
     @GetMapping("/{processId}")
-    public ResponseEntity<Object>  getResponse(@PathVariable String processId){
+    public ResponseEntity<Object>  getResponse(@PathVariable(required = true) String processId){
         var response = trainingInMemoryStorage.getTrainingResponse(processId);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

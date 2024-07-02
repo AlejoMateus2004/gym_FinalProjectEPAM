@@ -43,7 +43,7 @@ public class TrainerRestController {
 
     @Operation(summary = "Get Trainer", description = "Retrieve an existing Trainer")
     @GetMapping("/{username}")
-    public ResponseEntity<TrainerRecord.TrainerResponseWithTrainees> getTrainer(@PathVariable String username){
+    public ResponseEntity<TrainerRecord.TrainerResponseWithTrainees> getTrainer(@PathVariable(required = true) String username){
         TrainerRecord.TrainerResponseWithTrainees trainerResponse = trainerFacade.getTrainerByUserUsername_(username);
         if (trainerResponse == null) {
             return ResponseEntity.badRequest().build();
