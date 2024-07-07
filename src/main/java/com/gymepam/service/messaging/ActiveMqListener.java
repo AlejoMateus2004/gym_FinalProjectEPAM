@@ -14,13 +14,15 @@ import java.util.List;
 @Slf4j
 @Component
 @ConditionalOnProperty(name = "microservice.connection", havingValue = "activemq")
-public class Listener {
+public class ActiveMqListener{
+
     @Autowired
     private MessageConverter messageConverter;
+
     @Autowired
     private TrainingInMemoryStorage trainingInMemoryStorage;
 
-    @JmsListener(destination = "queue.saveTraining.response", containerFactory = "jmsListenerContainerFactory")
+    @JmsListener(destination = "queue.saveTraining.response")
     public void getResponseSaveTraining(Message message) {
         try {
             String processId = message.getStringProperty("processId");

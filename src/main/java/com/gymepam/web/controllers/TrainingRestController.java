@@ -26,19 +26,19 @@ public class TrainingRestController {
 
     @Operation(summary = "Update Training Status", description = "Update Training status to completed")
     @PutMapping("/status/{trainingId}")
-    public ResponseEntity<GlobalModelResponse> updateTrainingStatus(@PathVariable Long trainingId){
+    public ResponseEntity<GlobalModelResponse> updateTrainingStatus(@PathVariable(required = true, name = "trainingId") Long trainingId){
         return trainingFacadeService.updateTrainingStatus(trainingId);
     }
 
     @Operation(summary = "Get Training List by Trainer username", description = "Retrieve Training List by Trainer username")
     @GetMapping("/summary/trainer/{trainerUsername}")
-    public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(@PathVariable(required = true) String trainerUsername){
+    public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(@PathVariable(required = true, name = "trainerUsername") String trainerUsername){
         return trainingFacadeService.getTrainingSummaryByTrainer(trainerUsername);
     }
 
     @Operation(summary = "Delete Trainings By Trainer Username")
     @DeleteMapping("/{trainingId}")
-    public ResponseEntity<GlobalModelResponse> deleteTrainingByTrainerUsername(@PathVariable Long trainingId){
+    public ResponseEntity<GlobalModelResponse> deleteTrainingByTrainerUsername(@PathVariable(required = true, name = "trainingId") Long trainingId){
         return trainingFacadeService.deleteTrainingById(trainingId);
     }
 

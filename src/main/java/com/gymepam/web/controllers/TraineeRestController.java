@@ -55,7 +55,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Get Trainee", description = "Retrieve an existing Trainee")
     @GetMapping("/{username}")
-    public ResponseEntity<TraineeResponseWithTrainers> getTrainee(@PathVariable(required = true) String username){
+    public ResponseEntity<TraineeResponseWithTrainers> getTrainee(@PathVariable(required = true, name = "username") String username){
         TraineeResponseWithTrainers traineeResponse = traineeFacade.getTraineeByUserUsername_(username);
         if (traineeResponse == null) {
             return ResponseEntity.badRequest().build();
@@ -84,7 +84,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Delete Trainee")
     @DeleteMapping("/{username}")
-    public ResponseEntity<String> deleteTrainee(@PathVariable String username){
+    public ResponseEntity<String> deleteTrainee(@PathVariable(required = true, name = "username") String username){
         try {
             traineeFacade.deleteTraineeByUserName(username);
             return new ResponseEntity<>("Deleted user", HttpStatus.OK);
@@ -102,7 +102,7 @@ public class TraineeRestController {
 
     @Operation(summary = "Get Not Assigned Trainers On Trainee", description = "Get Not Assigned Trainers On Active Trainee")
     @GetMapping("/{username}/trainers-notAssigned")
-    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> getNotAssignedTrainersOnTrainee(@PathVariable(required = true) String username){
+    public ResponseEntity<Set<TrainerRecord.TrainerResponse>> getNotAssignedTrainersOnTrainee(@PathVariable(required = true, name = "username") String username){
         Set<TrainerRecord.TrainerResponse> trainersNotAssigned = traineeFacade.getNotAssignedTrainersByTraineeUserUsername(username);
         if (trainersNotAssigned == null) {
             return ResponseEntity.notFound().build();

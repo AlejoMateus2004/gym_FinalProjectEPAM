@@ -3,11 +3,11 @@ server:
 
 eureka:
   client:
-    enabled: false
+    enabled: ${EUREKA_CLIENT_ENABLED:false}
 feign:
   client:
     enabled: false
 
 microservice:
-  integration: disabled
-  connection: feign
+#  integration: ${INTEGRATION:enabled}
+  connection: ${CONNECTION:aws}

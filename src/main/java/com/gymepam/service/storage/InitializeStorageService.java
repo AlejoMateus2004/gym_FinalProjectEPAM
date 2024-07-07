@@ -5,7 +5,6 @@ import com.gymepam.domain.entities.*;
 import com.gymepam.mapper.TrainingMapper;
 import com.gymepam.service.trainee.TraineeService;
 import com.gymepam.service.trainer.TrainerService;
-import com.gymepam.service.training.TrainingMicroService;
 import com.gymepam.service.training.facade.TrainingFacadeService;
 import com.gymepam.service.trainingtype.TrainingTypeService;
 import com.gymepam.service.user.UserService;

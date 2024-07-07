@@ -1,7 +1,7 @@
 spring:
   profiles:
 #    active: dev, eureka_server, activemq
-    active: prod, integration
+    active: dev, integration, aws
   application:
     name: users-gym-service
   servlet:

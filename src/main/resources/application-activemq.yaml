@@ -30,3 +30,10 @@ spring:
       receive-timeout: 1000
       time-to-live: 36000
 
+queues:
+  saveTraining: queue.saveTraining
+  updateTraining: queue.updateTraining
+  summaryTrainer: queue.summaryTrainer
+  deleteTraining: queue.deleteTraining
+  trainerTrainingList: queue.trainerTrainingList
+  traineeTrainingList: queue.traineeTrainingList

@@ -2,7 +2,6 @@ package com.gymepam.web.controllers;
 
 import com.gymepam.service.training.TrainingInMemoryStorage;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,7 @@ public class RollingRestController {
     private TrainingInMemoryStorage trainingInMemoryStorage;
 
     @GetMapping("/{processId}")
-    public ResponseEntity<Object>  getResponse(@PathVariable(required = true) String processId){
+    public ResponseEntity<Object>  getResponse(@PathVariable(required = true, name = "processId") String processId){
         var response = trainingInMemoryStorage.getTrainingResponse(processId);
         if (response == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

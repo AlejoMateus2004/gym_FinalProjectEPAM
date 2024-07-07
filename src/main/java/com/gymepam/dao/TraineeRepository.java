@@ -4,7 +4,6 @@ import com.gymepam.domain.entities.Trainee;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 public interface TraineeRepository extends JpaRepository<Trainee, Long>, TraineeRepo{
     void deleteByUserUserName(@Param("username") String username);

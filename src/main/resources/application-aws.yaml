@@ -1,0 +1,17 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: ${ACCESS_KEY}
+      secretKey: ${SECRET_KEY}
+    region:
+      static: ${REGION:us-east-1}
+      auto: false
+
+queues:
+  saveTraining: saveTraining-Queue.fifo
+  updateTraining: updateTraining-Queue.fifo
+  summaryTrainer: summaryTrainer-Queue.fifo
+  deleteTraining: deleteTraining-Queue.fifo
+  trainerTrainingList: trainerTrainingList-Queue.fifo
+  traineeTrainingList: traineeTrainingList-Queue.fifo
+  responses: responses-Queue.fifo

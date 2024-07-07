@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Tag(name = "Trainer Controller", description = "Operations for creating, updating, and retrieving Trainers information in the application")
 @AllArgsConstructor
 @RestController
@@ -43,7 +41,7 @@ public class TrainerRestController {
 
     @Operation(summary = "Get Trainer", description = "Retrieve an existing Trainer")
     @GetMapping("/{username}")
-    public ResponseEntity<TrainerRecord.TrainerResponseWithTrainees> getTrainer(@PathVariable(required = true) String username){
+    public ResponseEntity<TrainerRecord.TrainerResponseWithTrainees> getTrainer(@PathVariable(required = true, name = "username") String username){
         TrainerRecord.TrainerResponseWithTrainees trainerResponse = trainerFacade.getTrainerByUserUsername_(username);
         if (trainerResponse == null) {
             return ResponseEntity.badRequest().build();

@@ -1,6 +1,7 @@
 package com.gymepam.service.training;
 
 import com.gymepam.config.GlobalModelResponse;
+import com.gymepam.config.QueuesConfig;
 import com.gymepam.domain.dto.records.TrainingRecord;
 import com.gymepam.domain.dto.records.TrainingRecord.TrainingMicroserviceRequest;
 import com.gymepam.domain.dto.records.TrainingRecord.TrainingSummary;
@@ -9,7 +10,6 @@ import jakarta.validation.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,13 +17,16 @@ import java.util.Map;
 import java.util.Set;
 
 @Slf4j
-public class TrainingServiceActiveMqImpl implements TrainingMicroService{
+public class TrainingServiceSqsImpl implements TrainingMicroService{
 
     @Autowired
     private Producer producer;
 
     @Autowired
     private TrainingInMemoryStorage trainingInMemoryStorage;
+
+    @Autowired
+    private QueuesConfig queuesConfig;
 
     @Override
     public ResponseEntity<GlobalModelResponse> saveTraining(TrainingMicroserviceRequest trainingRequest) {
@@ -39,7 +42,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
             if (!violations.isEmpty()) {
                 throw new ConstraintViolationException(violations);
             }
-            String processId = producer.sendMessage("queue.saveTraining",trainingRequest);
+            String processId = producer.sendMessage(queuesConfig.getSaveTraining(), trainingRequest);
             log.info("Save training processing (processId):{}",processId);
             String messageResponse = (String) trainingInMemoryStorage.getTrainingResponse(processId);
             if (messageResponse == null) {
@@ -72,7 +75,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
     public ResponseEntity<GlobalModelResponse> updateTrainingStatusToCompleted(Long trainingId) {
         GlobalModelResponse response = new GlobalModelResponse();
         try{
-            String processId= producer.sendMessage("queue.updateTraining",trainingId);
+            String processId= producer.sendMessage(queuesConfig.getUpdateTraining(), trainingId);
 
             log.info("Update training status processing (processId):{}",processId);
             String  messageResponse = (String) trainingInMemoryStorage.getTrainingResponse(processId);
@@ -100,7 +103,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
     public ResponseEntity<GlobalModelResponse> getTrainingSummaryByTrainerUsername(String trainerUsername){
         GlobalModelResponse response = new GlobalModelResponse();
         try {
-            String processId = producer.sendMessage("queue.summaryTrainer",trainerUsername);
+            String processId = producer.sendMessage(queuesConfig.getSummaryTrainer(), trainerUsername);
             log.info("Trainer summary is processing (processId):{}",processId);
             TrainingSummary  messageResponse = (TrainingSummary) trainingInMemoryStorage.getTrainingResponse(processId);
             if (messageResponse == null) {
@@ -130,7 +133,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
     public ResponseEntity<GlobalModelResponse> deleteTrainingById(Long trainingId) {
         GlobalModelResponse response = new GlobalModelResponse();
         try {
-            String processId = producer.sendMessage("queue.deleteTraining",trainingId);
+            String processId = producer.sendMessage(queuesConfig.getDeleteTraining(), trainingId);
 
             log.info("Delete Training {} is processing",trainingId);
             String messageResponse = (String) trainingInMemoryStorage.getTrainingResponse(processId);
@@ -159,7 +162,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
     public ResponseEntity<GlobalModelResponse> getTrainerTrainingListByTrainingParams(TrainingRecord.TrainerTrainingParamsRequest trainerRequest) {
         GlobalModelResponse response = new GlobalModelResponse();
         try {
-            String processId = producer.sendMessage("queue.trainerTrainingList",trainerRequest);
+            String processId = producer.sendMessage(queuesConfig.getTrainerTrainingList(), trainerRequest);
             log.info("Trainer training list processing");
             List<TrainingRecord.TrainerTrainingResponse> messageResponse = (List<TrainingRecord.TrainerTrainingResponse>) trainingInMemoryStorage.getTrainingResponse(processId);
             if (messageResponse == null) {
@@ -185,7 +188,7 @@ public class TrainingServiceActiveMqImpl implements TrainingMicroService{
     public ResponseEntity<GlobalModelResponse> getTraineeTrainingListByTrainingParams(TrainingRecord.TraineeTrainingParamsRequest traineeRequest) {
         GlobalModelResponse response = new GlobalModelResponse();
         try {
-            String processId = producer.sendMessage("queue.traineeTrainingList",traineeRequest);
+            String processId = producer.sendMessage(queuesConfig.getTraineeTrainingList(), traineeRequest);
             log.info("Trainee training list processing");
             Thread.sleep(2000);
             List<TrainingRecord.TraineeTrainingResponse> messageResponse = (List<TrainingRecord.TraineeTrainingResponse>) trainingInMemoryStorage.getTrainingResponse(processId);
