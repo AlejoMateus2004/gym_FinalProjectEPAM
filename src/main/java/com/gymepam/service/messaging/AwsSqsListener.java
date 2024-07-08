@@ -49,7 +49,6 @@ public class AwsSqsListener{
                 }
 
                 trainingInMemoryStorage.setTrainingResponse(processId, response);
-                log.info("{} Training {}", response, processId);
 
                 // Delete the message after processing it
                 DeleteMessageRequest deleteMessageRequest = DeleteMessageRequest.builder()
